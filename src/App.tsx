@@ -15,6 +15,7 @@ import DuplicateResolution from "./pages/DuplicateResolution";
 import Analytics from "./pages/Analytics";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import GovernanceDashboard from "./pages/GovernanceDashboard";
+import MoreMenu from "./pages/MoreMenu";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/executive" element={<ExecutiveDashboard />} />
               <Route path="/governance" element={<GovernanceDashboard />} />
+              <Route path="/more" element={<MoreMenu />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>

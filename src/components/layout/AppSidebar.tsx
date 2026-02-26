@@ -30,21 +30,12 @@ export default function AppSidebar() {
 
   return (
     <>
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm lg:hidden"
-          onClick={toggleSidebar}
-        />
-      )}
-
-      {/* Sidebar */}
+      {/* Sidebar - desktop only */}
       <aside
         className={cn(
-          "fixed top-0 z-50 flex h-screen flex-col border-border bg-sidebar transition-all duration-300 lg:sticky lg:top-0 lg:z-auto",
+          "hidden lg:sticky lg:top-0 lg:flex h-screen flex-col border-border bg-sidebar transition-all duration-300",
           dir === "rtl" ? "right-0 border-l" : "left-0 border-r",
-          sidebarCollapsed ? "w-20" : "w-[280px]",
-          sidebarOpen ? "translate-x-0" : dir === "rtl" ? "translate-x-full lg:translate-x-0" : "-translate-x-full lg:translate-x-0"
+          sidebarCollapsed ? "w-20" : "w-[280px]"
         )}
       >
         {/* Logo area */}
@@ -55,9 +46,6 @@ export default function AppSidebar() {
           {sidebarCollapsed && (
             <span className="mx-auto text-lg font-bold text-primary">CX</span>
           )}
-          <button onClick={toggleSidebar} className="rounded-lg p-1.5 text-muted-foreground hover:bg-sidebar-accent lg:hidden">
-            <X className="h-5 w-5" />
-          </button>
         </div>
 
         {/* Navigation */}
