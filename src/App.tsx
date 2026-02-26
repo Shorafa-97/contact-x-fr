@@ -11,10 +11,9 @@ import ContactDetail from "./pages/ContactDetail";
 import ContactForm from "./pages/ContactForm";
 import EntitiesList from "./pages/EntitiesList";
 import EntityDetail from "./pages/EntityDetail";
+import EntityForm from "./pages/EntityForm";
 import DuplicateResolution from "./pages/DuplicateResolution";
 import Analytics from "./pages/Analytics";
-import ExecutiveDashboard from "./pages/ExecutiveDashboard";
-import GovernanceDashboard from "./pages/GovernanceDashboard";
 import MoreMenu from "./pages/MoreMenu";
 import NotFound from "./pages/NotFound";
 
@@ -35,11 +34,11 @@ const App = () => (
               <Route path="/contacts/:id" element={<ContactDetail />} />
               <Route path="/contacts/:id/edit" element={<ContactForm />} />
               <Route path="/entities" element={<EntitiesList />} />
+              <Route path="/entities/new" element={<EntityForm />} />
               <Route path="/entities/:id" element={<EntityDetail />} />
+              <Route path="/entities/:id/edit" element={<EntityForm />} />
               <Route path="/duplicates" element={<DuplicateResolution />} />
               <Route path="/analytics" element={<Analytics />} />
-              <Route path="/executive" element={<ExecutiveDashboard />} />
-              <Route path="/governance" element={<GovernanceDashboard />} />
               <Route path="/more" element={<MoreMenu />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

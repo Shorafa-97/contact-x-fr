@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Star } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function ContactForm() {
@@ -8,16 +8,33 @@ export default function ContactForm() {
   const isEdit = id && id !== "new";
   const { t } = useTranslation();
 
-  const [emails, setEmails] = useState([""]);
-  const [phones, setPhones] = useState([""]);
-  const [addresses, setAddresses] = useState([{ line: "", city: "", country: "", postalCode: "" }]);
+  const [emails, setEmails] = useState([{ value: "", primary: true }]);
+  const [phones, setPhones] = useState([{ value: "", primary: true }]);
+  const [addresses, setAddresses] = useState([{ line: "", city: "", country: "", postalCode: "", primary: true }]);
 
-  const addEmail = () => setEmails([...emails, ""]);
-  const removeEmail = (i: number) => setEmails(emails.filter((_, idx) => idx !== i));
-  const addPhone = () => setPhones([...phones, ""]);
-  const removePhone = (i: number) => setPhones(phones.filter((_, idx) => idx !== i));
-  const addAddress = () => setAddresses([...addresses, { line: "", city: "", country: "", postalCode: "" }]);
-  const removeAddress = (i: number) => setAddresses(addresses.filter((_, idx) => idx !== i));
+  const addEmail = () => setEmails([...emails, { value: "", primary: false }]);
+  const removeEmail = (i: number) => {
+    const next = emails.filter((_, idx) => idx !== i);
+    if (next.length > 0 && !next.some(e => e.primary)) next[0].primary = true;
+    setEmails(next);
+  };
+  const setPrimaryEmail = (i: number) => setEmails(emails.map((e, idx) => ({ ...e, primary: idx === i })));
+
+  const addPhone = () => setPhones([...phones, { value: "", primary: false }]);
+  const removePhone = (i: number) => {
+    const next = phones.filter((_, idx) => idx !== i);
+    if (next.length > 0 && !next.some(p => p.primary)) next[0].primary = true;
+    setPhones(next);
+  };
+  const setPrimaryPhone = (i: number) => setPhones(phones.map((p, idx) => ({ ...p, primary: idx === i })));
+
+  const addAddress = () => setAddresses([...addresses, { line: "", city: "", country: "", postalCode: "", primary: false }]);
+  const removeAddress = (i: number) => {
+    const next = addresses.filter((_, idx) => idx !== i);
+    if (next.length > 0 && !next.some(a => a.primary)) next[0].primary = true;
+    setAddresses(next);
+  };
+  const setPrimaryAddress = (i: number) => setAddresses(addresses.map((a, idx) => ({ ...a, primary: idx === i })));
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
@@ -38,7 +55,7 @@ export default function ContactForm() {
       </div>
 
       <div className="space-y-6">
-        {/* Contact Type & National ID */}
+        {/* Contact Type & Personal */}
         <div className="card-enterprise">
           <h3 className="mb-4 text-base font-semibold text-foreground">{t("form.personalInfo")}</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -157,7 +174,7 @@ export default function ContactForm() {
           </div>
         </div>
 
-        {/* Email Addresses - Multiple */}
+        {/* Email Addresses */}
         <div className="card-enterprise">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold text-foreground">{t("form.emails")}</h3>
@@ -167,9 +184,16 @@ export default function ContactForm() {
             </button>
           </div>
           <div className="space-y-3">
-            {emails.map((_, i) => (
+            {emails.map((email, i) => (
               <div key={i} className="flex items-center gap-3">
                 <input type="email" placeholder="email@example.com" className="input-enterprise flex-1" />
+                <button
+                  onClick={() => setPrimaryEmail(i)}
+                  className={`rounded-lg p-2 transition-colors ${email.primary ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
+                  title={t("form.setPrimary")}
+                >
+                  <Star className={`h-4 w-4 ${email.primary ? "fill-primary" : ""}`} />
+                </button>
                 {emails.length > 1 && (
                   <button onClick={() => removeEmail(i)} className="rounded-lg p-2 text-destructive hover:bg-destructive/10 transition-colors">
                     <Trash2 className="h-4 w-4" />
@@ -180,7 +204,7 @@ export default function ContactForm() {
           </div>
         </div>
 
-        {/* Phone Numbers - Multiple */}
+        {/* Phone Numbers */}
         <div className="card-enterprise">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold text-foreground">{t("form.phones")}</h3>
@@ -190,9 +214,16 @@ export default function ContactForm() {
             </button>
           </div>
           <div className="space-y-3">
-            {phones.map((_, i) => (
+            {phones.map((phone, i) => (
               <div key={i} className="flex items-center gap-3">
                 <input type="tel" placeholder="+966 5XXXXXXXX" className="input-enterprise flex-1" />
+                <button
+                  onClick={() => setPrimaryPhone(i)}
+                  className={`rounded-lg p-2 transition-colors ${phone.primary ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
+                  title={t("form.setPrimary")}
+                >
+                  <Star className={`h-4 w-4 ${phone.primary ? "fill-primary" : ""}`} />
+                </button>
                 {phones.length > 1 && (
                   <button onClick={() => removePhone(i)} className="rounded-lg p-2 text-destructive hover:bg-destructive/10 transition-colors">
                     <Trash2 className="h-4 w-4" />
@@ -203,7 +234,7 @@ export default function ContactForm() {
           </div>
         </div>
 
-        {/* Addresses - Multiple */}
+        {/* Addresses */}
         <div className="card-enterprise">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold text-foreground">{t("form.addresses")}</h3>
@@ -213,10 +244,19 @@ export default function ContactForm() {
             </button>
           </div>
           <div className="space-y-4">
-            {addresses.map((_, i) => (
+            {addresses.map((addr, i) => (
               <div key={i} className="rounded-lg border border-border p-4">
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">{t("form.address")} #{i + 1}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-muted-foreground">{t("form.address")} #{i + 1}</span>
+                    <button
+                      onClick={() => setPrimaryAddress(i)}
+                      className={`rounded-lg p-1.5 transition-colors ${addr.primary ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
+                      title={t("form.setPrimary")}
+                    >
+                      <Star className={`h-3.5 w-3.5 ${addr.primary ? "fill-primary" : ""}`} />
+                    </button>
+                  </div>
                   {addresses.length > 1 && (
                     <button onClick={() => removeAddress(i)} className="rounded-lg p-1.5 text-destructive hover:bg-destructive/10 transition-colors">
                       <Trash2 className="h-4 w-4" />

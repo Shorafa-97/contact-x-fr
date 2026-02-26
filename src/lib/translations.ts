@@ -198,6 +198,26 @@ const translations: Record<string, Record<Lang, string>> = {
   "common.contacts": { en: "contacts", ar: "جهات اتصال" },
   "common.fromLastMonth": { en: "from last month", ar: "من الشهر الماضي" },
   "common.resolvedThisWeek": { en: "resolved this week", ar: "تم حلها هذا الأسبوع" },
+
+  // Dashboard tabs
+  "dashboard.tabMain": { en: "Overview", ar: "نظرة عامة" },
+  "dashboard.tabExecutive": { en: "Executive", ar: "التنفيذي" },
+  "dashboard.tabGovernance": { en: "Governance", ar: "الحوكمة" },
+
+  // Entity form page
+  "entity.edit": { en: "Edit Entity", ar: "تعديل الجهة" },
+  "entity.createDesc": { en: "Add a new entity to the system", ar: "إضافة جهة جديدة إلى النظام" },
+  "entity.updateDesc": { en: "Update entity information", ar: "تحديث معلومات الجهة" },
+  "entity.nameSection": { en: "Entity Name", ar: "اسم الجهة" },
+  "entity.classification": { en: "Classification", ar: "التصنيف" },
+
+  // Duplicate merge
+  "duplicates.selectMain": { en: "Select the main profile to keep after merge", ar: "اختر الملف الرئيسي للاحتفاظ به بعد الدمج" },
+  "duplicates.mainProfile": { en: "Main", ar: "رئيسي" },
+
+  // Contact form primary
+  "form.setPrimary": { en: "Set as primary", ar: "تعيين كأساسي" },
+  "form.address": { en: "Address", ar: "العنوان" },
 };
 
 export function t(key: string, lang: Lang): string {

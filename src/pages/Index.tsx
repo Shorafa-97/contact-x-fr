@@ -1,8 +1,11 @@
-import { Users, Building2, CheckCircle, GitCompare } from "lucide-react";
+import { useState } from "react";
+import { Users, Building2, CheckCircle, GitCompare, FileWarning, AlertTriangle, Target, ChevronRight } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
 import { useTranslation } from "@/hooks/useTranslation";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
+// Main Dashboard data
 const contactsByType = [
   { name: "Individual", value: 2450 },
   { name: "Organization", value: 890 },
@@ -28,6 +31,28 @@ const recentActivity = [
   { id: 5, action: "Contact Created", actionAr: "تم إنشاء جهة اتصال", name: "Ahmad Hassan", nameAr: "أحمد حسن", type: "Individual", time: "3 hours ago", timeAr: "قبل 3 ساعات" },
 ];
 
+// Executive data
+const monthlyGrowth = [
+  { month: "Sep", contacts: 3200, entities: 350 },
+  { month: "Oct", contacts: 3400, entities: 360 },
+  { month: "Nov", contacts: 3550, entities: 370 },
+  { month: "Dec", contacts: 3650, entities: 378 },
+  { month: "Jan", contacts: 3780, entities: 385 },
+  { month: "Feb", contacts: 3860, entities: 392 },
+];
+
+// Governance data
+const weakProfiles = [
+  { id: "c-1", name: "Unknown Contact #142", completeness: 15, missing: ["Email", "Phone", "Organization"] },
+  { id: "c-2", name: "Test Record", completeness: 8, missing: ["Email", "Phone", "Name (Arabic)", "Address"] },
+  { id: "c-3", name: "Partial Entry", completeness: 22, missing: ["Phone", "Organization", "Address"] },
+];
+
+const orphanRecords = [
+  { id: "c-5", name: "Khalid Mahmoud", nameAr: "خالد محمود", type: "Individual", reason: "No entity linked", reasonAr: "غير مرتبط بجهة" },
+  { id: "c-6", name: "Old Ministry Record", nameAr: "سجل وزارة قديم", type: "Organization", reason: "Parent entity deleted", reasonAr: "تم حذف الجهة الأم" },
+];
+
 export default function Dashboard() {
   const { t, lang } = useTranslation();
   const isAr = lang === "ar";
@@ -39,73 +64,162 @@ export default function Dashboard() {
         <p className="page-subtitle">{t("dashboard.overview")}</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KPICard title={t("dashboard.totalContacts")} value="3,860" change={`+12.5% ${t("common.fromLastMonth")}`} changeType="positive" icon={Users} />
-        <KPICard title={t("dashboard.totalEntities")} value="392" change={`+3.2% ${t("common.fromLastMonth")}`} changeType="positive" icon={Building2} />
-        <KPICard title={t("dashboard.avgCompleteness")} value="78.4%" change={`-2.1% ${t("common.fromLastMonth")}`} changeType="negative" icon={CheckCircle} />
-        <KPICard title={t("dashboard.pendingDuplicates")} value="47" change={`12 ${t("common.resolvedThisWeek")}`} changeType="neutral" icon={GitCompare} />
-      </div>
+      <Tabs defaultValue="main" className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="main">{t("dashboard.tabMain")}</TabsTrigger>
+          <TabsTrigger value="executive">{t("dashboard.tabExecutive")}</TabsTrigger>
+          <TabsTrigger value="governance">{t("dashboard.tabGovernance")}</TabsTrigger>
+        </TabsList>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.contactsByType")}</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <PieChart>
-              <Pie data={contactsByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
-                {contactsByType.map((_, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ borderRadius: "0.75rem", border: "1px solid hsl(214, 32%, 91%)", boxShadow: "var(--shadow-md)" }} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        {/* Main Dashboard */}
+        <TabsContent value="main" className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <KPICard title={t("dashboard.totalContacts")} value="3,860" change={`+12.5% ${t("common.fromLastMonth")}`} changeType="positive" icon={Users} />
+            <KPICard title={t("dashboard.totalEntities")} value="392" change={`+3.2% ${t("common.fromLastMonth")}`} changeType="positive" icon={Building2} />
+            <KPICard title={t("dashboard.avgCompleteness")} value="78.4%" change={`-2.1% ${t("common.fromLastMonth")}`} changeType="negative" icon={CheckCircle} />
+            <KPICard title={t("dashboard.pendingDuplicates")} value="47" change={`12 ${t("common.resolvedThisWeek")}`} changeType="neutral" icon={GitCompare} />
+          </div>
 
-        <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.entitiesByType")}</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={entitiesByType}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
-              <YAxis tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
-              <Tooltip contentStyle={{ borderRadius: "0.75rem", border: "1px solid hsl(214, 32%, 91%)", boxShadow: "var(--shadow-md)" }} />
-              <Bar dataKey="value" fill="hsl(217, 91%, 60%)" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="card-enterprise">
+              <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.contactsByType")}</h3>
+              <ResponsiveContainer width="100%" height={280}>
+                <PieChart>
+                  <Pie data={contactsByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
+                    {contactsByType.map((_, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ borderRadius: "0.75rem", border: "1px solid hsl(214, 32%, 91%)", boxShadow: "var(--shadow-md)" }} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
 
-      <div className="card-enterprise">
-        <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.recentActivity")}</h3>
-        <div className="overflow-x-auto">
-          <table className="table-enterprise">
-            <thead>
-              <tr>
-                <th>{t("dashboard.action")}</th>
-                <th>{t("dashboard.name")}</th>
-                <th>{t("dashboard.type")}</th>
-                <th>{t("dashboard.time")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentActivity.map((item) => (
-                <tr key={item.id}>
-                  <td className="font-medium text-foreground">{isAr ? item.actionAr : item.action}</td>
-                  <td>
-                    <div>
-                      <p className="font-medium text-foreground">{isAr ? item.nameAr : item.name}</p>
-                      <p className="text-xs text-muted-foreground">{isAr ? item.name : item.nameAr}</p>
+            <div className="card-enterprise">
+              <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.entitiesByType")}</h3>
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={entitiesByType}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+                  <YAxis tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+                  <Tooltip contentStyle={{ borderRadius: "0.75rem", border: "1px solid hsl(214, 32%, 91%)", boxShadow: "var(--shadow-md)" }} />
+                  <Bar dataKey="value" fill="hsl(217, 91%, 60%)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="card-enterprise">
+            <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.recentActivity")}</h3>
+            <div className="overflow-x-auto">
+              <table className="table-enterprise">
+                <thead>
+                  <tr>
+                    <th>{t("dashboard.action")}</th>
+                    <th>{t("dashboard.name")}</th>
+                    <th>{t("dashboard.type")}</th>
+                    <th>{t("dashboard.time")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentActivity.map((item) => (
+                    <tr key={item.id}>
+                      <td className="font-medium text-foreground">{isAr ? item.actionAr : item.action}</td>
+                      <td>
+                        <div>
+                          <p className="font-medium text-foreground">{isAr ? item.nameAr : item.name}</p>
+                          <p className="text-xs text-muted-foreground">{isAr ? item.name : item.nameAr}</p>
+                        </div>
+                      </td>
+                      <td><span className="badge-status badge-type">{item.type}</span></td>
+                      <td className="text-muted-foreground">{isAr ? item.timeAr : item.time}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Executive Dashboard */}
+        <TabsContent value="executive" className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <KPICard title={t("executive.totalRecords")} value="4,252" change="+8.3% QoQ" changeType="positive" icon={Users} />
+            <KPICard title={t("executive.dataQuality")} value="78.4%" change="+6.2% QoQ" changeType="positive" icon={CheckCircle} />
+            <KPICard title={t("executive.resolutionRate")} value="94.7%" change="47 pending" changeType="neutral" icon={Target} />
+          </div>
+
+          <div className="card-enterprise">
+            <h3 className="mb-4 text-base font-semibold text-foreground">{t("executive.growthTrend")}</h3>
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={monthlyGrowth}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+                <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+                <Bar dataKey="contacts" name={t("page.contacts")} fill="hsl(217, 91%, 60%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="entities" name={t("page.entities")} fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </TabsContent>
+
+        {/* Governance Dashboard */}
+        <TabsContent value="governance" className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <KPICard title={t("governance.weakProfiles")} value="156" change="< 30%" changeType="negative" icon={FileWarning} />
+            <KPICard title={t("governance.orphanRecords")} value="23" changeType="negative" icon={Users} change={isAr ? "غير مرتبط بجهة" : "No entity linked"} />
+            <KPICard title={t("governance.pendingDuplicates")} value="47" changeType="neutral" icon={GitCompare} change={isAr ? "يتطلب مراجعة" : "Requires review"} />
+            <KPICard title={t("governance.qualityAlerts")} value="12" changeType="negative" icon={AlertTriangle} change={isAr ? "مشاكل حرجة" : "Critical issues"} />
+          </div>
+
+          <div className="card-enterprise">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-foreground">{t("governance.weakProfiles")}</h3>
+              <button className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">{t("governance.viewAll")}</button>
+            </div>
+            <div className="space-y-2">
+              {weakProfiles.map((p) => (
+                <div key={p.id} className="flex items-center justify-between rounded-lg border border-border p-3 transition-colors hover:bg-muted/30">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{p.name}</p>
+                    <p className="text-xs text-muted-foreground">{t("governance.missing")}: {p.missing.join(", ")}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-12 overflow-hidden rounded-full bg-muted">
+                        <div className="h-full rounded-full completeness-low" style={{ width: `${p.completeness}%` }} />
+                      </div>
+                      <span className="text-xs font-medium text-destructive">{p.completeness}%</span>
                     </div>
-                  </td>
-                  <td><span className="badge-status badge-type">{item.type}</span></td>
-                  <td className="text-muted-foreground">{isAr ? item.timeAr : item.time}</td>
-                </tr>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </div>
+          </div>
+
+          <div className="card-enterprise">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-foreground">{t("governance.orphanRecords")}</h3>
+              <button className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">{t("governance.viewAll")}</button>
+            </div>
+            <div className="space-y-2">
+              {orphanRecords.map((r) => (
+                <div key={r.id} className="flex items-center justify-between rounded-lg border border-border p-3 transition-colors hover:bg-muted/30">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{isAr ? r.nameAr : r.name}</p>
+                    <p className="text-xs text-muted-foreground">{isAr ? r.name : r.nameAr}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="badge-status badge-pending">{isAr ? r.reasonAr : r.reason}</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
