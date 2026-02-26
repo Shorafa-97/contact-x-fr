@@ -15,6 +15,7 @@ export default function ContactDetail() {
   const activeTabIndex = tabs.indexOf(activeTab);
   const resolvedTab = activeTabIndex >= 0 ? activeTabIndex : 0;
 
+  // In a real app, fetch by id. Using mock data here.
   const contact = {
     id,
     nameEn: "Mohammed Al-Rashid",

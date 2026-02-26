@@ -6,7 +6,7 @@ import {
   Users,
   Building2,
   GitCompare,
-  BarChart3,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +15,7 @@ const navItems = [
   { labelKey: "nav.contacts", icon: Users, path: "/contacts" },
   { labelKey: "nav.entities", icon: Building2, path: "/entities" },
   { labelKey: "nav.duplicates", icon: GitCompare, path: "/duplicates" },
-  { labelKey: "nav.analytics", icon: BarChart3, path: "/analytics" },
+  { labelKey: "nav.search", icon: Search, path: "/search" },
 ];
 
 export default function AppSidebar() {

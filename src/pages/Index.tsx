@@ -68,7 +68,8 @@ export default function Dashboard() {
         <TabsList className="mb-6">
           <TabsTrigger value="main">{t("dashboard.tabMain")}</TabsTrigger>
           <TabsTrigger value="executive">{t("dashboard.tabExecutive")}</TabsTrigger>
-          <TabsTrigger value="governance">{t("dashboard.tabGovernance")}</TabsTrigger>
+         <TabsTrigger value="governance">{t("dashboard.tabGovernance")}</TabsTrigger>
+          <TabsTrigger value="analytics">{t("dashboard.tabAnalytics")}</TabsTrigger>
         </TabsList>
 
         {/* Main Dashboard */}
@@ -219,7 +220,98 @@ export default function Dashboard() {
             </div>
           </div>
         </TabsContent>
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <AnalyticsTab />
+        </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+// Analytics tab content (moved from separate page)
+function AnalyticsTab() {
+  const { t } = useTranslation();
+  const completenessDistribution = [
+    { range: "0-20%", count: 45 },
+    { range: "21-40%", count: 120 },
+    { range: "41-60%", count: 340 },
+    { range: "61-80%", count: 890 },
+    { range: "81-100%", count: 1465 },
+  ];
+  const analyticsContactsByType = [
+    { name: "Individual", value: 2450 },
+    { name: "Organization", value: 890 },
+    { name: "Government", value: 340 },
+    { name: "Non-Profit", value: 180 },
+  ];
+  const analyticsEntitiesByType = [
+    { name: "Ministry", value: 45 },
+    { name: "Agency", value: 78 },
+    { name: "Department", value: 124 },
+    { name: "Division", value: 89 },
+  ];
+  const ANALYTICS_COLORS = ["hsl(217, 91%, 60%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)"];
+
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="card-enterprise">
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.completenessDistribution")}</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={completenessDistribution}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
+            <XAxis dataKey="range" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+            <YAxis tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+            <Tooltip contentStyle={{ borderRadius: "0.75rem", border: "1px solid hsl(214, 32%, 91%)" }} />
+            <Bar dataKey="count" fill="hsl(217, 91%, 60%)" radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="card-enterprise">
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.contactsByType")}</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie data={analyticsContactsByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
+              {analyticsContactsByType.map((_, i) => <Cell key={i} fill={ANALYTICS_COLORS[i]} />)}
+            </Pie>
+            <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="card-enterprise">
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.entitiesByType")}</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie data={analyticsEntitiesByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
+              {analyticsEntitiesByType.map((_, i) => <Cell key={i} fill={ANALYTICS_COLORS[i]} />)}
+            </Pie>
+            <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="card-enterprise">
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.dataQualityTrends")}</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={[
+            { month: "Sep", completeness: 72, duplicates: 89 },
+            { month: "Oct", completeness: 74, duplicates: 76 },
+            { month: "Nov", completeness: 76, duplicates: 65 },
+            { month: "Dec", completeness: 77, duplicates: 58 },
+            { month: "Jan", completeness: 78, duplicates: 52 },
+            { month: "Feb", completeness: 79, duplicates: 47 },
+          ]}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
+            <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+            <YAxis tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+            <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+            <Legend />
+            <Bar dataKey="completeness" name="Avg Completeness %" fill="hsl(217, 91%, 60%)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="duplicates" name="Pending Duplicates" fill="hsl(38, 92%, 50%)" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Star } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import DatePickerField from "@/components/ui/date-picker-field";
 
 export default function ContactForm() {
   const { id } = useParams();
@@ -75,7 +76,7 @@ export default function ContactForm() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.dateOfBirth")}</label>
-              <input type="date" className="input-enterprise" />
+              <DatePickerField />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.nationality")}</label>
