@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Star } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const existingEntities = [
@@ -10,10 +11,42 @@ const existingEntities = [
   { id: "e-5", nameEn: "Education Department" },
 ];
 
+const entityTypes = ["public", "semi-government", "private", "international", "ngo"];
+
+const countries = [
+  "Saudi Arabia", "United Arab Emirates", "Bahrain", "Qatar", "Oman", "Kuwait",
+  "Egypt", "Jordan", "Lebanon", "Iraq", "Morocco", "Tunisia",
+  "United States", "United Kingdom", "Germany", "France", "India", "Pakistan",
+];
+
+const addressTypes = ["Home", "Work", "Office", "Billing", "Shipping", "Other"];
+
+const countryCodes = [
+  { code: "+966", flag: "🇸🇦" }, { code: "+971", flag: "🇦🇪" }, { code: "+973", flag: "🇧🇭" },
+  { code: "+974", flag: "🇶🇦" }, { code: "+968", flag: "🇴🇲" }, { code: "+965", flag: "🇰🇼" },
+  { code: "+20", flag: "🇪🇬" }, { code: "+962", flag: "🇯🇴" }, { code: "+961", flag: "🇱🇧" },
+  { code: "+1", flag: "🇺🇸" }, { code: "+44", flag: "🇬🇧" }, { code: "+91", flag: "🇮🇳" },
+  { code: "+92", flag: "🇵🇰" }, { code: "+63", flag: "🇵🇭" },
+];
+
 export default function EntityForm() {
   const { id } = useParams();
   const isEdit = id && id !== "new";
   const { t } = useTranslation();
+
+  const [contactPoints, setContactPoints] = useState([{ name: "", email: "", phone: "", countryCode: "+966", country: "" }]);
+  const [addresses, setAddresses] = useState([{ type: "Work", address: "", primary: true }]);
+
+  const addContactPoint = () => setContactPoints([...contactPoints, { name: "", email: "", phone: "", countryCode: "+966", country: "" }]);
+  const removeContactPoint = (i: number) => setContactPoints(contactPoints.filter((_, idx) => idx !== i));
+
+  const addAddress = () => setAddresses([...addresses, { type: "Work", address: "", primary: false }]);
+  const removeAddress = (i: number) => {
+    const next = addresses.filter((_, idx) => idx !== i);
+    if (next.length > 0 && !next.some(a => a.primary)) next[0].primary = true;
+    setAddresses(next);
+  };
+  const setPrimaryAddress = (i: number) => setAddresses(addresses.map((a, idx) => ({ ...a, primary: idx === i })));
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
@@ -34,10 +67,10 @@ export default function EntityForm() {
       </div>
 
       <div className="space-y-6">
-        {/* Names */}
+        {/* Basic Info */}
         <div className="card-enterprise">
           <h3 className="mb-4 text-base font-semibold text-foreground">{t("entity.nameSection")}</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.nameEn")}</label>
               <input type="text" placeholder="Enter entity name" className="input-enterprise" />
@@ -46,26 +79,26 @@ export default function EntityForm() {
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.nameAr")}</label>
               <input type="text" placeholder="أدخل اسم الجهة" className="input-enterprise" dir="rtl" />
             </div>
-          </div>
-        </div>
-
-        {/* Classification */}
-        <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">{t("entity.classification")}</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.code")}</label>
-              <input type="text" placeholder="e.g. MOF-001" className="input-enterprise" />
-            </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.type")}</label>
               <select className="input-enterprise">
                 <option value="">{t("form.select")}</option>
-                <option value="Ministry">{t("common.ministry")}</option>
-                <option value="Agency">{t("common.agency")}</option>
-                <option value="Department">{t("common.department")}</option>
-                <option value="Division">{t("common.division")}</option>
-                <option value="Unit">{t("common.unit")}</option>
+                {entityTypes.map(et => (
+                  <option key={et} value={et}>{et.charAt(0).toUpperCase() + et.slice(1)}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.registrationId")}</label>
+              <input type="text" placeholder="e.g. REG-001" className="input-enterprise" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.country")}</label>
+              <select className="input-enterprise">
+                <option value="">{t("form.select")}</option>
+                {countries.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
               </select>
             </div>
             <div>
@@ -77,62 +110,113 @@ export default function EntityForm() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.status")}</label>
-              <select className="input-enterprise">
-                <option value="Active">{t("common.active")}</option>
-                <option value="Inactive">{t("common.inactive")}</option>
-              </select>
-            </div>
           </div>
         </div>
 
-        {/* Contact Info */}
+        {/* Contact Points */}
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">{t("form.contactInfo")}</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.email")}</label>
-              <input type="email" placeholder="entity@gov.sa" className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.phone")}</label>
-              <input type="tel" placeholder="+966 1XXXXXXX" className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.website")}</label>
-              <input type="url" placeholder="https://www.example.gov.sa" className="input-enterprise" />
-            </div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-base font-semibold text-foreground">{t("entity.contactPoints")}</h3>
+            <button onClick={addContactPoint} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+              <Plus className="h-3.5 w-3.5" />
+              {t("entity.addContactPoint")}
+            </button>
+          </div>
+          <div className="space-y-4">
+            {contactPoints.map((cp, i) => (
+              <div key={i} className="rounded-lg border border-border p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-sm font-medium text-muted-foreground">#{i + 1}</span>
+                  {contactPoints.length > 1 && (
+                    <button onClick={() => removeContactPoint(i)} className="rounded-lg p-1.5 text-destructive hover:bg-destructive/10 transition-colors">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.cpName")}</label>
+                    <input type="text" placeholder="Contact name" className="input-enterprise" />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.email")}</label>
+                    <input type="email" placeholder="email@example.com" className="input-enterprise" />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.phone")}</label>
+                    <div className="flex gap-1">
+                      <select
+                        value={cp.countryCode}
+                        onChange={(e) => {
+                          const next = [...contactPoints];
+                          next[i] = { ...next[i], countryCode: e.target.value };
+                          setContactPoints(next);
+                        }}
+                        className="input-enterprise w-24 shrink-0"
+                      >
+                        {countryCodes.map(cc => (
+                          <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>
+                        ))}
+                      </select>
+                      <input type="tel" placeholder="5XXXXXXXX" className="input-enterprise flex-1" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.country")}</label>
+                    <select className="input-enterprise">
+                      <option value="">{t("form.select")}</option>
+                      {countries.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Address */}
+        {/* Addresses */}
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">{t("entity.address")}</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.addressLine")}</label>
-              <input type="text" placeholder={t("form.addressLine")} className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.city")}</label>
-              <input type="text" placeholder={t("form.city")} className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.country")}</label>
-              <input type="text" placeholder={t("form.country")} className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.postalCode")}</label>
-              <input type="text" placeholder={t("form.postalCode")} className="input-enterprise" />
-            </div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-base font-semibold text-foreground">{t("form.addresses")}</h3>
+            <button onClick={addAddress} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+              <Plus className="h-3.5 w-3.5" />
+              {t("form.addAddress")}
+            </button>
           </div>
-        </div>
-
-        {/* Description */}
-        <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">{t("entity.description")}</h3>
-          <textarea rows={4} placeholder={t("entity.description")} className="input-enterprise h-auto resize-none" />
+          <div className="space-y-3">
+            {addresses.map((addr, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <select
+                  value={addr.type}
+                  onChange={(e) => {
+                    const next = [...addresses];
+                    next[i] = { ...next[i], type: e.target.value };
+                    setAddresses(next);
+                  }}
+                  className="input-enterprise w-32 shrink-0"
+                >
+                  {addressTypes.map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+                <input type="text" placeholder="Enter address" className="input-enterprise flex-1" />
+                <button
+                  onClick={() => setPrimaryAddress(i)}
+                  className={`rounded-lg p-2 transition-colors ${addr.primary ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
+                  title="Primary"
+                >
+                  <Star className={`h-3.5 w-3.5 ${addr.primary ? "fill-primary" : ""}`} />
+                </button>
+                {addresses.length > 1 && (
+                  <button onClick={() => removeAddress(i)} className="rounded-lg p-2 text-destructive hover:bg-destructive/10 transition-colors">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -232,6 +232,43 @@ const translations: Record<string, Record<Lang, string>> = {
   "search.entities": { en: "Entities", ar: "الجهات" },
   "search.startTyping": { en: "Start typing to search...", ar: "ابدأ الكتابة للبحث..." },
   "search.noResults": { en: "No results found", ar: "لا توجد نتائج" },
+  "search.allContactTypes": { en: "All Contact Types", ar: "جميع أنواع جهات الاتصال" },
+  "search.allEntityTypes": { en: "All Entity Types", ar: "جميع أنواع الجهات" },
+
+  // Contact form additions
+  "form.currentEntity": { en: "Current Entity", ar: "الجهة الحالية" },
+  "form.entityName": { en: "Entity Name", ar: "اسم الجهة" },
+
+  // Entity form additions
+  "entity.registrationId": { en: "Registration ID", ar: "رقم التسجيل" },
+  "entity.contactPoints": { en: "Contact Points", ar: "نقاط الاتصال" },
+  "entity.addContactPoint": { en: "Add Contact Point", ar: "إضافة نقطة اتصال" },
+  "entity.cpName": { en: "Name", ar: "الاسم" },
+
+  // Duplicates additions
+  "duplicates.merged": { en: "Merged", ar: "مدموج" },
+  "duplicates.dismissed": { en: "Dismissed", ar: "مرفوض" },
+
+  // Audit Logs
+  "audit.title": { en: "Audit Logs", ar: "سجلات التدقيق" },
+  "audit.timestamp": { en: "Timestamp", ar: "الوقت" },
+  "audit.user": { en: "User", ar: "المستخدم" },
+  "audit.action": { en: "Action", ar: "الإجراء" },
+  "audit.entityType": { en: "Entity Type", ar: "نوع الكيان" },
+  "audit.entityId": { en: "Entity ID", ar: "معرف الكيان" },
+  "audit.changes": { en: "Changes", ar: "التغييرات" },
+
+  // Operational dashboard
+  "dashboard.tabOperational": { en: "Operational", ar: "التشغيلي" },
+  "operational.activeContacts": { en: "Active Contacts", ar: "جهات الاتصال النشطة" },
+  "operational.activeEntities": { en: "Active Entities", ar: "الجهات النشطة" },
+  "operational.multiEntity": { en: "Contacts with Multiple Entities", ar: "جهات اتصال متعددة الجهات" },
+  "operational.avgEntities": { en: "Avg Entities per Contact", ar: "متوسط الجهات لكل جهة اتصال" },
+  "operational.inactive90": { en: "Inactive 90+ Days", ar: "غير نشط 90+ يوم" },
+  "operational.mostActive": { en: "Most Active Contacts", ar: "أكثر جهات الاتصال نشاطاً" },
+  "operational.recentlyInactive": { en: "Recently Inactive Contacts", ar: "جهات اتصال غير نشطة مؤخراً" },
+  "operational.recentContacts": { en: "Recent Contacts", ar: "جهات الاتصال الأخيرة" },
+  "operational.recentEntities": { en: "Recent Entities", ar: "الجهات الأخيرة" },
 };
 
 export function t(key: string, lang: Lang): string {

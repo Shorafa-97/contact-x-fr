@@ -1,39 +1,53 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Search as SearchIcon, Users, Building2, ChevronRight } from "lucide-react";
+import { Search as SearchIcon, Building2, ChevronRight } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
 
 const allContacts = [
   { id: "c-1", name: "Mohammed Al-Rashid", nameAr: "محمد الرشيد", type: "Individual", email: "m.alrashid@example.gov" },
   { id: "c-2", name: "Sara Ahmed", nameAr: "سارة أحمد", type: "Individual", email: "sara.ahmed@example.com" },
-  { id: "c-3", name: "Ahmad Hassan", nameAr: "أحمد حسن", type: "Individual", email: "ahmad.h@example.com" },
+  { id: "c-3", name: "Ahmad Hassan", nameAr: "أحمد حسن", type: "Organization", email: "ahmad.h@example.com" },
   { id: "c-4", name: "National Bank", nameAr: "البنك الوطني", type: "Organization", email: "info@nationalbank.sa" },
-  { id: "c-5", name: "Khalid Mahmoud", nameAr: "خالد محمود", type: "Individual", email: "khalid.m@example.com" },
+  { id: "c-5", name: "Khalid Mahmoud", nameAr: "خالد محمود", type: "Government", email: "khalid.m@example.com" },
 ];
 
 const allEntities = [
-  { id: "e-1", name: "Ministry of Finance", nameAr: "وزارة المالية", type: "Ministry" },
-  { id: "e-2", name: "Saudi Telecom", nameAr: "الاتصالات السعودية", type: "Agency" },
-  { id: "e-3", name: "Budget Department", nameAr: "إدارة الميزانية", type: "Department" },
-  { id: "e-4", name: "Revenue Division", nameAr: "قسم الإيرادات", type: "Division" },
+  { id: "e-1", name: "Ministry of Finance", nameAr: "وزارة المالية", type: "public" },
+  { id: "e-2", name: "Saudi Telecom", nameAr: "الاتصالات السعودية", type: "private" },
+  { id: "e-3", name: "Budget Department", nameAr: "إدارة الميزانية", type: "semi-government" },
+  { id: "e-4", name: "Revenue Division", nameAr: "قسم الإيرادات", type: "ngo" },
 ];
+
+const contactTypes = ["Individual", "Organization", "Government", "Non-Profit"];
+const entityTypes = ["public", "semi-government", "private", "international", "ngo"];
 
 export default function SearchPage() {
   const { t, lang } = useTranslation();
   const isAr = lang === "ar";
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "contacts" | "entities">("all");
+  const [contactTypeFilter, setContactTypeFilter] = useState("");
+  const [entityTypeFilter, setEntityTypeFilter] = useState("");
 
   const q = query.toLowerCase();
-  const filteredContacts = (filter === "all" || filter === "contacts")
-    ? allContacts.filter(c => c.name.toLowerCase().includes(q) || c.nameAr.includes(query) || c.email.toLowerCase().includes(q))
-    : [];
-  const filteredEntities = (filter === "all" || filter === "entities")
-    ? allEntities.filter(e => e.name.toLowerCase().includes(q) || e.nameAr.includes(query))
-    : [];
 
-  const hasResults = filteredContacts.length > 0 || filteredEntities.length > 0;
+  const filteredContacts = useMemo(() => {
+    if (filter === "entities") return [];
+    let results = allContacts.filter(c => c.name.toLowerCase().includes(q) || c.nameAr.includes(query) || c.email.toLowerCase().includes(q));
+    if (contactTypeFilter) results = results.filter(c => c.type === contactTypeFilter);
+    return results;
+  }, [q, query, filter, contactTypeFilter]);
+
+  const filteredEntities = useMemo(() => {
+    if (filter === "contacts") return [];
+    let results = allEntities.filter(e => e.name.toLowerCase().includes(q) || e.nameAr.includes(query));
+    if (entityTypeFilter) results = results.filter(e => e.type === entityTypeFilter);
+    return results;
+  }, [q, query, filter, entityTypeFilter]);
+
+  const totalCount = filteredContacts.length + filteredEntities.length;
+  const hasResults = totalCount > 0;
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
@@ -42,7 +56,6 @@ export default function SearchPage() {
         <p className="page-subtitle">{t("search.subtitle")}</p>
       </div>
 
-      {/* Search input */}
       <div className="relative">
         <SearchIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-3" />
         <input
@@ -55,23 +68,55 @@ export default function SearchPage() {
         />
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex gap-2">
-        {(["all", "contacts", "entities"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={cn(
-              "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-              filter === f ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {t(`search.${f}`)}
-          </button>
-        ))}
+      {/* Filter tabs with counts */}
+      <div className="flex flex-wrap gap-2">
+        {(["all", "contacts", "entities"] as const).map((f) => {
+          const count = f === "all" ? totalCount : f === "contacts" ? filteredContacts.length : filteredEntities.length;
+          return (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={cn(
+                "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                filter === f ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {t(`search.${f}`)} {query && `(${count})`}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Results */}
+      {/* Type filters */}
+      {query && (
+        <div className="flex flex-wrap gap-3">
+          {(filter === "all" || filter === "contacts") && filteredContacts.length > 0 && (
+            <select
+              value={contactTypeFilter}
+              onChange={(e) => setContactTypeFilter(e.target.value)}
+              className="input-enterprise w-auto"
+            >
+              <option value="">{t("search.allContactTypes")}</option>
+              {contactTypes.map(ct => (
+                <option key={ct} value={ct}>{ct}</option>
+              ))}
+            </select>
+          )}
+          {(filter === "all" || filter === "entities") && filteredEntities.length > 0 && (
+            <select
+              value={entityTypeFilter}
+              onChange={(e) => setEntityTypeFilter(e.target.value)}
+              className="input-enterprise w-auto"
+            >
+              <option value="">{t("search.allEntityTypes")}</option>
+              {entityTypes.map(et => (
+                <option key={et} value={et}>{et.charAt(0).toUpperCase() + et.slice(1)}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
+
       {!query && (
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
           <SearchIcon className="mb-3 h-12 w-12 opacity-30" />
