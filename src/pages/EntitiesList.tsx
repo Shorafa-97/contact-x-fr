@@ -1,7 +1,17 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Search, Filter, Plus, Building2, Eye, Pencil, Trash2 } from "lucide-react";
+import { Search, Filter, Plus, Building2, Eye, Pencil, Trash2, Upload } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import ImportDialog, { ImportField } from "@/components/ImportDialog";
+
+const entityImportFields: ImportField[] = [
+  { key: "nameEn", label: "NAME_EN", required: true },
+  { key: "nameAr", label: "NAME_AR", required: true },
+  { key: "entityType", label: "ENTITY_TYPE", required: true, validate: (v) => ["public", "semi-government", "private", "international", "ngo"].includes(v.toLowerCase()) },
+  { key: "registrationId", label: "REGISTRATION_ID" },
+  { key: "country", label: "COUNTRY" },
+  { key: "parentEntity", label: "PARENT_ENTITY" },
+];
 
 const entities = Array.from({ length: 15 }, (_, i) => ({
   id: `e-${i + 1}`,
@@ -17,6 +27,7 @@ const entities = Array.from({ length: 15 }, (_, i) => ({
 
 export default function EntitiesList() {
   const [search, setSearch] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
   const { t } = useTranslation();
 
   const filtered = entities.filter(
@@ -30,14 +41,31 @@ export default function EntitiesList() {
           <h1 className="page-title">{t("page.entities")}</h1>
           <p className="page-subtitle">{entities.length} {t("entities.totalEntities")}</p>
         </div>
-        <Link
-          to="/entities/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          <Plus className="h-4 w-4" />
-          {t("entities.addEntity")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/entities/new"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            <Plus className="h-4 w-4" />
+            {t("entities.addEntity")}
+          </Link>
+          <button
+            onClick={() => setImportOpen(true)}
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+          >
+            <Upload className="h-4 w-4" />
+            {t("import.importEntities")}
+          </button>
+        </div>
       </div>
+
+      <ImportDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        domain="entity"
+        fields={entityImportFields}
+        onImport={(rows) => console.log("Imported entities:", rows)}
+      />
 
       <div className="card-enterprise">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

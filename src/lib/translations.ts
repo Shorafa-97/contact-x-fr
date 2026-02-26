@@ -269,6 +269,23 @@ const translations: Record<string, Record<Lang, string>> = {
   "operational.recentlyInactive": { en: "Recently Inactive Contacts", ar: "جهات اتصال غير نشطة مؤخراً" },
   "operational.recentContacts": { en: "Recent Contacts", ar: "جهات الاتصال الأخيرة" },
   "operational.recentEntities": { en: "Recent Entities", ar: "الجهات الأخيرة" },
+
+  // Import
+  "import.title.contact": { en: "Import Contacts", ar: "استيراد جهات الاتصال" },
+  "import.title.entity": { en: "Import Entities", ar: "استيراد الجهات" },
+  "import.dragDrop": { en: "Drag & drop a file here, or", ar: "اسحب وأفلت ملفاً هنا، أو" },
+  "import.browse": { en: "Browse", ar: "تصفح" },
+  "import.supported": { en: "Supported: CSV, XLSX, JSON — max 5MB", ar: "مدعوم: CSV, XLSX, JSON — حد أقصى 5 ميجابايت" },
+  "import.downloadTemplate": { en: "Download Template", ar: "تحميل القالب" },
+  "import.preview": { en: "Preview", ar: "معاينة" },
+  "import.valid": { en: "valid", ar: "صالح" },
+  "import.invalid": { en: "invalid", ar: "غير صالح" },
+  "import.parsing": { en: "Parsing file...", ar: "جاري تحليل الملف..." },
+  "import.fixErrors": { en: "Please fix the errors in the highlighted rows before importing. All rows must be valid.", ar: "يرجى إصلاح الأخطاء في الصفوف المميزة قبل الاستيراد. يجب أن تكون جميع الصفوف صالحة." },
+  "import.cancel": { en: "Cancel", ar: "إلغاء" },
+  "import.import": { en: "Import", ar: "استيراد" },
+  "import.importContacts": { en: "Import", ar: "استيراد" },
+  "import.importEntities": { en: "Import", ar: "استيراد" },
 };
 
 export function t(key: string, lang: Lang): string {

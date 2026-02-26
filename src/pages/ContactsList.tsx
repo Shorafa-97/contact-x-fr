@@ -1,7 +1,25 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Filter, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Filter, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Upload } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import ImportDialog, { ImportField } from "@/components/ImportDialog";
+
+const contactImportFields: ImportField[] = [
+  { key: "firstName", label: "FIRSTNAME", required: true },
+  { key: "lastName", label: "LASTNAME", required: true },
+  { key: "prefix", label: "PREFIX" },
+  { key: "middleName", label: "MIDDLENAME" },
+  { key: "suffix", label: "SUFFIX" },
+  { key: "firstNameAr", label: "FIRSTNAMEAR" },
+  { key: "lastNameAr", label: "LASTNAMEAR" },
+  { key: "prefixAr", label: "PREFIXAR" },
+  { key: "middleNameAr", label: "MIDDLENAMEAR" },
+  { key: "suffixAr", label: "SUFFIXAR" },
+  { key: "email", label: "EMAIL", validate: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+  { key: "phone", label: "PHONE" },
+  { key: "type", label: "TYPE" },
+  { key: "nationalId", label: "NATIONALID" },
+];
 
 const contacts = Array.from({ length: 20 }, (_, i) => ({
   id: `c-${i + 1}`,
@@ -17,6 +35,7 @@ const contacts = Array.from({ length: 20 }, (_, i) => ({
 export default function ContactsList() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [importOpen, setImportOpen] = useState(false);
   const { t } = useTranslation();
 
   const filtered = contacts.filter(
@@ -36,14 +55,31 @@ export default function ContactsList() {
           <h1 className="page-title">{t("page.contacts")}</h1>
           <p className="page-subtitle">{contacts.length} {t("contacts.totalContacts")}</p>
         </div>
-        <Link
-          to="/contacts/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          <Plus className="h-4 w-4" />
-          {t("contacts.addContact")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/contacts/new"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            <Plus className="h-4 w-4" />
+            {t("contacts.addContact")}
+          </Link>
+          <button
+            onClick={() => setImportOpen(true)}
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+          >
+            <Upload className="h-4 w-4" />
+            {t("import.importContacts")}
+          </button>
+        </div>
       </div>
+
+      <ImportDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        domain="contact"
+        fields={contactImportFields}
+        onImport={(rows) => console.log("Imported contacts:", rows)}
+      />
 
       {/* Search and Filters */}
       <div className="card-enterprise">
