@@ -7,6 +7,7 @@ import {
   Building2,
   GitCompare,
   Search,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ const navItems = [
   { labelKey: "nav.entities", icon: Building2, path: "/entities" },
   { labelKey: "nav.duplicates", icon: GitCompare, path: "/duplicates" },
   { labelKey: "nav.search", icon: Search, path: "/search" },
+  { labelKey: "audit.title", icon: ClipboardList, path: "/audit-logs" },
 ];
 
 export default function AppSidebar() {

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Users, Building2, CheckCircle, GitCompare, FileWarning, AlertTriangle, Target, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Users, Building2, CheckCircle, GitCompare, FileWarning, AlertTriangle, Target, ChevronRight, TrendingUp, Clock } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -68,7 +69,8 @@ export default function Dashboard() {
         <TabsList className="mb-6">
           <TabsTrigger value="main">{t("dashboard.tabMain")}</TabsTrigger>
           <TabsTrigger value="executive">{t("dashboard.tabExecutive")}</TabsTrigger>
-         <TabsTrigger value="governance">{t("dashboard.tabGovernance")}</TabsTrigger>
+          <TabsTrigger value="governance">{t("dashboard.tabGovernance")}</TabsTrigger>
+          <TabsTrigger value="operational">{t("dashboard.tabOperational")}</TabsTrigger>
           <TabsTrigger value="analytics">{t("dashboard.tabAnalytics")}</TabsTrigger>
         </TabsList>
 
@@ -220,6 +222,12 @@ export default function Dashboard() {
             </div>
           </div>
         </TabsContent>
+
+        {/* Operational Tab */}
+        <TabsContent value="operational" className="space-y-6">
+          <OperationalTab />
+        </TabsContent>
+
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
           <AnalyticsTab />
@@ -313,5 +321,141 @@ function AnalyticsTab() {
         </ResponsiveContainer>
       </div>
     </div>
+  );
+}
+
+// Operational tab
+function OperationalTab() {
+  const { t, lang } = useTranslation();
+  const isAr = lang === "ar";
+
+  const recentContacts = [
+    { name: "AddressTypeTest Contact", date: "24/02/2026", type: "citizen" },
+    { name: "CleanResetTest ValidUser", date: "22/02/2026", type: "citizen" },
+    { name: "ValidName ValidLast", date: "22/02/2026", type: "citizen" },
+    { name: "John Smith", date: "22/02/2026", type: "citizen" },
+    { name: "ValidB_O5ji Test", date: "22/02/2026", type: "vip" },
+  ];
+
+  const recentEntities = [
+    { name: "AddressTypeTestEntity", date: "24/02/2026", type: "public" },
+    { name: "AddressTypeTestEntity", date: "24/02/2026", type: "private" },
+    { name: "Test import", date: "22/02/2026", type: "public" },
+    { name: "UI Import Test DDD", date: "22/02/2026", type: "private" },
+    { name: "Test Phone CP ZZZ123", date: "22/02/2026", type: "public" },
+  ];
+
+  const mostActive = [
+    { name: "Abdullah Afri...", entities: 4, contacts: 0 },
+    { name: "Abdullah Afri...", entities: 3, contacts: 0 },
+    { name: "tesdf tesdf", entities: 2, contacts: 1 },
+    { name: "Omar Afri...", entities: 2, contacts: 1 },
+  ];
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="card-enterprise">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">{t("operational.activeContacts")}</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div><p className="text-2xl font-bold text-foreground">18</p><p className="text-xs text-muted-foreground">Last 30 days</p></div>
+            <div><p className="text-2xl font-bold text-foreground">18</p><p className="text-xs text-muted-foreground">Last 90 days</p></div>
+            <div><p className="text-2xl font-bold text-foreground">18</p><p className="text-xs text-muted-foreground">Last 365 days</p></div>
+          </div>
+        </div>
+        <div className="card-enterprise">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">{t("operational.activeEntities")}</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div><p className="text-2xl font-bold text-foreground">10</p><p className="text-xs text-muted-foreground">Last 30 days</p></div>
+            <div><p className="text-2xl font-bold text-foreground">10</p><p className="text-xs text-muted-foreground">Last 90 days</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="card-enterprise">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">{t("operational.multiEntity")}</p>
+              <p className="text-2xl font-bold text-foreground mt-1">1</p>
+            </div>
+            <GitCompare className="h-5 w-5 text-muted-foreground" />
+          </div>
+        </div>
+        <div className="card-enterprise">
+          <p className="text-sm text-muted-foreground">{t("operational.avgEntities")}</p>
+          <p className="text-2xl font-bold text-foreground mt-1">1.2</p>
+        </div>
+        <div className="card-enterprise">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">{t("operational.inactive90")}</p>
+              <p className="text-2xl font-bold text-foreground mt-1">0</p>
+            </div>
+            <Clock className="h-5 w-5 text-muted-foreground" />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="card-enterprise">
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("operational.mostActive")}</h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={mostActive} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
+              <XAxis type="number" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+              <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} stroke="hsl(215, 16%, 47%)" />
+              <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+              <Bar dataKey="entities" stackId="a" fill="hsl(217, 91%, 60%)" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="contacts" stackId="a" fill="hsl(38, 92%, 50%)" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="card-enterprise">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <h3 className="text-base font-semibold text-foreground">{t("operational.recentlyInactive")}</h3>
+          </div>
+          <p className="text-sm text-muted-foreground">No data available</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="card-enterprise">
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("operational.recentContacts")}</h3>
+          <div className="space-y-2">
+            {recentContacts.map((c, i) => (
+              <div key={i} className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{c.name}</p>
+                  <p className="text-xs text-muted-foreground">{c.date}</p>
+                </div>
+                <span className="badge-status badge-type text-xs">{c.type}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="card-enterprise">
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("operational.recentEntities")}</h3>
+          <div className="space-y-2">
+            {recentEntities.map((e, i) => (
+              <div key={i} className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{e.name}</p>
+                  <p className="text-xs text-muted-foreground">{e.date}</p>
+                </div>
+                <span className="badge-status badge-type text-xs">{e.type}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

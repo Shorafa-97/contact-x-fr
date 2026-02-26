@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Search, ChevronRight } from "lucide-react";
+import { Search, ChevronRight, ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const moreItems = [
   { labelKey: "nav.search", icon: Search, path: "/search" },
+  { labelKey: "audit.title", icon: ClipboardList, path: "/audit-logs" },
 ];
 
 export default function MoreMenu() {

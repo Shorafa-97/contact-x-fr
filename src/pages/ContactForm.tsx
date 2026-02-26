@@ -4,6 +4,24 @@ import { ArrowLeft, Save, Plus, Trash2, Star } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import DatePickerField from "@/components/ui/date-picker-field";
 
+const existingEntities = [
+  { id: "e-1", nameEn: "Ministry of Finance" },
+  { id: "e-2", nameEn: "Ministry of Health" },
+  { id: "e-3", nameEn: "National Bank" },
+  { id: "e-4", nameEn: "Defense Agency" },
+  { id: "e-5", nameEn: "Education Department" },
+];
+
+const addressTypes = ["Home", "Work", "Office", "Billing", "Shipping", "Other"];
+
+const countryCodes = [
+  { code: "+966", flag: "🇸🇦" }, { code: "+971", flag: "🇦🇪" }, { code: "+973", flag: "🇧🇭" },
+  { code: "+974", flag: "🇶🇦" }, { code: "+968", flag: "🇴🇲" }, { code: "+965", flag: "🇰🇼" },
+  { code: "+20", flag: "🇪🇬" }, { code: "+962", flag: "🇯🇴" }, { code: "+961", flag: "🇱🇧" },
+  { code: "+1", flag: "🇺🇸" }, { code: "+44", flag: "🇬🇧" }, { code: "+91", flag: "🇮🇳" },
+  { code: "+92", flag: "🇵🇰" }, { code: "+63", flag: "🇵🇭" },
+];
+
 export default function ContactForm() {
   const { id } = useParams();
   const isEdit = id && id !== "new";
@@ -11,7 +29,7 @@ export default function ContactForm() {
 
   const [emails, setEmails] = useState([{ value: "", primary: true }]);
   const [phones, setPhones] = useState([{ value: "", countryCode: "+966", primary: true }]);
-  const [addresses, setAddresses] = useState([{ line: "", city: "", country: "", postalCode: "", primary: true }]);
+  const [addresses, setAddresses] = useState([{ type: "Home", address: "", primary: true }]);
 
   const addEmail = () => setEmails([...emails, { value: "", primary: false }]);
   const removeEmail = (i: number) => {
@@ -29,7 +47,7 @@ export default function ContactForm() {
   };
   const setPrimaryPhone = (i: number) => setPhones(phones.map((p, idx) => ({ ...p, primary: idx === i })));
 
-  const addAddress = () => setAddresses([...addresses, { line: "", city: "", country: "", postalCode: "", primary: false }]);
+  const addAddress = () => setAddresses([...addresses, { type: "Home", address: "", primary: false }]);
   const removeAddress = (i: number) => {
     const next = addresses.filter((_, idx) => idx !== i);
     if (next.length > 0 && !next.some(a => a.primary)) next[0].primary = true;
@@ -99,14 +117,7 @@ export default function ContactForm() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.prefix")}</label>
-              <select className="input-enterprise">
-                <option value="">{t("form.select")}</option>
-                <option value="Mr.">Mr.</option>
-                <option value="Mrs.">Mrs.</option>
-                <option value="Ms.">Ms.</option>
-                <option value="Dr.">Dr.</option>
-                <option value="Prof.">Prof.</option>
-              </select>
+              <input type="text" placeholder="Mr., Mrs., Ms., Dr., Prof." className="input-enterprise" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.firstName")}</label>
@@ -133,13 +144,7 @@ export default function ContactForm() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.prefixAr")}</label>
-              <select className="input-enterprise" dir="rtl">
-                <option value="">اختر...</option>
-                <option value="السيد">السيد</option>
-                <option value="السيدة">السيدة</option>
-                <option value="الدكتور">الدكتور</option>
-                <option value="الأستاذ">الأستاذ</option>
-              </select>
+              <input type="text" placeholder="السيد، السيدة، الدكتور، الأستاذ" className="input-enterprise" dir="rtl" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.firstNameAr")}</label>
@@ -160,13 +165,22 @@ export default function ContactForm() {
           </div>
         </div>
 
-        {/* Professional Info */}
+        {/* Professional Info - replaced Organization with Current Entity + Entity Name */}
         <div className="card-enterprise">
           <h3 className="mb-4 text-base font-semibold text-foreground">{t("form.professionalInfo")}</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.organization")}</label>
-              <input type="text" placeholder={t("form.organization")} className="input-enterprise" />
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.currentEntity")}</label>
+              <select className="input-enterprise">
+                <option value="">{t("form.select")}</option>
+                {existingEntities.map(e => (
+                  <option key={e.id} value={e.id}>{e.nameEn}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.entityName")}</label>
+              <input type="text" placeholder={t("form.entityName")} className="input-enterprise" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.position")}</label>
@@ -226,20 +240,9 @@ export default function ContactForm() {
                   }}
                   className="input-enterprise w-28 shrink-0"
                 >
-                  <option value="+966">🇸🇦 +966</option>
-                  <option value="+971">🇦🇪 +971</option>
-                  <option value="+973">🇧🇭 +973</option>
-                  <option value="+974">🇶🇦 +974</option>
-                  <option value="+968">🇴🇲 +968</option>
-                  <option value="+965">🇰🇼 +965</option>
-                  <option value="+20">🇪🇬 +20</option>
-                  <option value="+962">🇯🇴 +962</option>
-                  <option value="+961">🇱🇧 +961</option>
-                  <option value="+1">🇺🇸 +1</option>
-                  <option value="+44">🇬🇧 +44</option>
-                  <option value="+91">🇮🇳 +91</option>
-                  <option value="+92">🇵🇰 +92</option>
-                  <option value="+63">🇵🇭 +63</option>
+                  {countryCodes.map(cc => (
+                    <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>
+                  ))}
                 </select>
                 <input type="tel" placeholder="5XXXXXXXX" className="input-enterprise flex-1" />
                 <button
@@ -259,7 +262,7 @@ export default function ContactForm() {
           </div>
         </div>
 
-        {/* Addresses */}
+        {/* Addresses - simplified to type select + address text */}
         <div className="card-enterprise">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold text-foreground">{t("form.addresses")}</h3>
@@ -268,44 +271,35 @@ export default function ContactForm() {
               {t("form.addAddress")}
             </button>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {addresses.map((addr, i) => (
-              <div key={i} className="rounded-lg border border-border p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-muted-foreground">{t("form.address")} #{i + 1}</span>
-                    <button
-                      onClick={() => setPrimaryAddress(i)}
-                      className={`rounded-lg p-1.5 transition-colors ${addr.primary ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
-                      title={t("form.setPrimary")}
-                    >
-                      <Star className={`h-3.5 w-3.5 ${addr.primary ? "fill-primary" : ""}`} />
-                    </button>
-                  </div>
-                  {addresses.length > 1 && (
-                    <button onClick={() => removeAddress(i)} className="rounded-lg p-1.5 text-destructive hover:bg-destructive/10 transition-colors">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.addressLine")}</label>
-                    <input type="text" placeholder={t("form.addressLine")} className="input-enterprise" />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.city")}</label>
-                    <input type="text" placeholder={t("form.city")} className="input-enterprise" />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.country")}</label>
-                    <input type="text" placeholder={t("form.country")} className="input-enterprise" />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.postalCode")}</label>
-                    <input type="text" placeholder={t("form.postalCode")} className="input-enterprise" />
-                  </div>
-                </div>
+              <div key={i} className="flex items-center gap-2">
+                <select
+                  value={addr.type}
+                  onChange={(e) => {
+                    const next = [...addresses];
+                    next[i] = { ...next[i], type: e.target.value };
+                    setAddresses(next);
+                  }}
+                  className="input-enterprise w-32 shrink-0"
+                >
+                  {addressTypes.map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+                <input type="text" placeholder={t("form.addressLine")} className="input-enterprise flex-1" />
+                <button
+                  onClick={() => setPrimaryAddress(i)}
+                  className={`rounded-lg p-2 transition-colors ${addr.primary ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
+                  title={t("form.setPrimary")}
+                >
+                  <Star className={`h-3.5 w-3.5 ${addr.primary ? "fill-primary" : ""}`} />
+                </button>
+                {addresses.length > 1 && (
+                  <button onClick={() => removeAddress(i)} className="rounded-lg p-2 text-destructive hover:bg-destructive/10 transition-colors">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             ))}
           </div>

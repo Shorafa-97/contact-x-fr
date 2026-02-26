@@ -16,6 +16,7 @@ import DuplicateResolution from "./pages/DuplicateResolution";
 import Analytics from "./pages/Analytics";
 import MoreMenu from "./pages/MoreMenu";
 import SearchPage from "./pages/Search";
+import AuditLogs from "./pages/AuditLogs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/duplicates" element={<DuplicateResolution />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/audit-logs" element={<AuditLogs />} />
               <Route path="/more" element={<MoreMenu />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
