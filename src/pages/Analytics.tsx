@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const completenessDistribution = [
   { range: "0-20%", count: 45 },
@@ -25,16 +26,18 @@ const entitiesByType = [
 const COLORS = ["hsl(217, 91%, 60%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)"];
 
 export default function Analytics() {
+  const { t } = useTranslation();
+
   return (
     <div className="page-container space-y-6 animate-fade-in">
       <div>
-        <h1 className="page-title">Analytics</h1>
-        <p className="page-subtitle">Data quality and distribution metrics</p>
+        <h1 className="page-title">{t("analytics.title")}</h1>
+        <p className="page-subtitle">{t("analytics.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Completeness Distribution</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.completenessDistribution")}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={completenessDistribution}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
@@ -47,7 +50,7 @@ export default function Analytics() {
         </div>
 
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Contacts by Type</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.contactsByType")}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie data={contactsByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
@@ -60,7 +63,7 @@ export default function Analytics() {
         </div>
 
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Entities by Type</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.entitiesByType")}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie data={entitiesByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
@@ -73,7 +76,7 @@ export default function Analytics() {
         </div>
 
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Data Quality Trends</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.dataQualityTrends")}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={[
               { month: "Sep", completeness: 72, duplicates: 89 },

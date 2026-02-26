@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Building2, Users, ChevronRight } from "lucide-react";
+import { ArrowLeft, Building2, ChevronRight } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const childEntities = [
   { id: "e-sub-1", name: "Budget Department", nameAr: "إدارة الميزانية", type: "Department", contacts: 34 },
@@ -15,12 +16,13 @@ const relatedContacts = [
 
 export default function EntityDetail() {
   const { id } = useParams();
+  const { t } = useTranslation();
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
       <Link to="/entities" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
         <ArrowLeft className="h-4 w-4" />
-        Back to Entities
+        {t("entities.backToEntities")}
       </Link>
 
       <div className="card-enterprise">
@@ -33,15 +35,14 @@ export default function EntityDetail() {
             <p className="text-sm text-muted-foreground">وزارة المالية</p>
             <div className="mt-1 flex items-center gap-2">
               <span className="badge-status badge-type">Ministry</span>
-              <span className="badge-status badge-active">Active</span>
+              <span className="badge-status badge-active">{t("common.active")}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Hierarchy */}
       <div className="card-enterprise">
-        <h3 className="mb-4 text-base font-semibold text-foreground">Organization Hierarchy</h3>
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("entities.orgHierarchy")}</h3>
         <div className="space-y-2">
           {childEntities.map((child) => (
             <div key={child.id} className="flex items-center justify-between rounded-lg border border-border p-3 transition-colors hover:bg-muted/30">
@@ -56,19 +57,18 @@ export default function EntityDetail() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="badge-status badge-type">{child.type}</span>
-                <span className="text-xs text-muted-foreground">{child.contacts} contacts</span>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">{child.contacts} {t("common.contacts")}</span>
+                <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Related Contacts */}
       <div className="card-enterprise">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-foreground">Related Contacts</h3>
-          <span className="text-sm text-muted-foreground">{relatedContacts.length} contacts</span>
+          <h3 className="text-base font-semibold text-foreground">{t("entities.relatedContacts")}</h3>
+          <span className="text-sm text-muted-foreground">{relatedContacts.length} {t("common.contacts")}</span>
         </div>
         <div className="space-y-2">
           {relatedContacts.map((contact) => (

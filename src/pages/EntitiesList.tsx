@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Filter, Plus, Building2, ChevronRight } from "lucide-react";
+import { Search, Filter, Plus, Building2, Eye, Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const entities = Array.from({ length: 15 }, (_, i) => ({
   id: `e-${i + 1}`,
@@ -12,8 +13,12 @@ const entities = Array.from({ length: 15 }, (_, i) => ({
   status: ["Active", "Active", "Inactive"][i % 3],
 }));
 
+const existingEntities = entities.map(e => ({ id: e.id, nameEn: e.nameEn }));
+
 export default function EntitiesList() {
   const [search, setSearch] = useState("");
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { t } = useTranslation();
 
   const filtered = entities.filter(
     (e) => e.nameEn.toLowerCase().includes(search.toLowerCase()) || e.nameAr.includes(search)
@@ -23,24 +28,27 @@ export default function EntitiesList() {
     <div className="page-container space-y-6 animate-fade-in">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="page-title">Entities</h1>
-          <p className="page-subtitle">{entities.length} total entities</p>
+          <h1 className="page-title">{t("page.entities")}</h1>
+          <p className="page-subtitle">{entities.length} {t("entities.totalEntities")}</p>
         </div>
-        <button className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+        <button
+          onClick={() => setShowCreateDialog(true)}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
           <Plus className="h-4 w-4" />
-          Add Entity
+          {t("entities.addEntity")}
         </button>
       </div>
 
       <div className="card-enterprise">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input type="text" placeholder="Search entities..." value={search} onChange={(e) => setSearch(e.target.value)} className="input-enterprise pl-9" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-3" />
+            <input type="text" placeholder={t("entities.search")} value={search} onChange={(e) => setSearch(e.target.value)} className="input-enterprise pl-9 rtl:pl-3 rtl:pr-9" />
           </div>
           <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
             <Filter className="h-4 w-4" />
-            Filters
+            {t("contacts.filters")}
           </button>
         </div>
       </div>
@@ -50,12 +58,12 @@ export default function EntitiesList() {
           <table className="table-enterprise">
             <thead>
               <tr>
-                <th>Entity Name</th>
-                <th>Type</th>
-                <th>Parent</th>
-                <th>Contacts</th>
-                <th>Status</th>
-                <th className="w-10"></th>
+                <th>{t("entities.entityName")}</th>
+                <th>{t("entities.type")}</th>
+                <th>{t("entities.parent")}</th>
+                <th>{t("entities.contacts")}</th>
+                <th>{t("entities.status")}</th>
+                <th className="w-28">{/* Actions */}</th>
               </tr>
             </thead>
             <tbody>
@@ -79,9 +87,17 @@ export default function EntitiesList() {
                   <td className="text-sm font-medium text-foreground">{e.contactsCount}</td>
                   <td><span className={`badge-status ${e.status === "Active" ? "badge-active" : "badge-inactive"}`}>{e.status}</span></td>
                   <td>
-                    <Link to={`/entities/${e.id}`} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted inline-flex">
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
+                    <div className="flex items-center gap-1">
+                      <Link to={`/entities/${e.id}`} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title={t("common.view")}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                      <button className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title={t("common.update")}>
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button className="rounded-lg p-1.5 text-destructive hover:bg-destructive/10 transition-colors" title={t("common.delete")}>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -104,11 +120,105 @@ export default function EntitiesList() {
               <span className="badge-status badge-type">{e.type}</span>
             </div>
             <div className="mt-3 flex items-center justify-between text-sm text-muted-foreground">
-              <span>{e.contactsCount} contacts</span>
+              <span>{e.contactsCount} {t("common.contacts")}</span>
               <span className={`badge-status ${e.status === "Active" ? "badge-active" : "badge-inactive"}`}>{e.status}</span>
             </div>
           </Link>
         ))}
+      </div>
+
+      {/* Create Entity Dialog */}
+      {showCreateDialog && (
+        <CreateEntityDialog onClose={() => setShowCreateDialog(false)} existingEntities={existingEntities} />
+      )}
+    </div>
+  );
+}
+
+function CreateEntityDialog({ onClose, existingEntities }: { onClose: () => void; existingEntities: { id: string; nameEn: string }[] }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 backdrop-blur-sm" onClick={onClose}>
+      <div className="mx-4 w-full max-w-2xl rounded-xl border border-border bg-card p-6" style={{ boxShadow: "var(--shadow-lg)" }} onClick={(e) => e.stopPropagation()}>
+        <h2 className="mb-6 text-lg font-semibold text-foreground">{t("entity.create")}</h2>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.nameEn")}</label>
+              <input type="text" placeholder="Enter entity name" className="input-enterprise" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.nameAr")}</label>
+              <input type="text" placeholder="أدخل اسم الجهة" className="input-enterprise" dir="rtl" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.code")}</label>
+              <input type="text" placeholder="e.g. MOF-001" className="input-enterprise" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.type")}</label>
+              <select className="input-enterprise">
+                <option value="">{t("form.select")}</option>
+                <option value="Ministry">{t("common.ministry")}</option>
+                <option value="Agency">{t("common.agency")}</option>
+                <option value="Department">{t("common.department")}</option>
+                <option value="Division">{t("common.division")}</option>
+                <option value="Unit">{t("common.unit")}</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.parentEntity")}</label>
+              <select className="input-enterprise">
+                <option value="">{t("form.select")}</option>
+                {existingEntities.map(e => (
+                  <option key={e.id} value={e.id}>{e.nameEn}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.status")}</label>
+              <select className="input-enterprise">
+                <option value="Active">{t("common.active")}</option>
+                <option value="Inactive">{t("common.inactive")}</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.email")}</label>
+              <input type="email" placeholder="entity@gov.sa" className="input-enterprise" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.phone")}</label>
+              <input type="tel" placeholder="+966 1XXXXXXX" className="input-enterprise" />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.website")}</label>
+            <input type="url" placeholder="https://www.example.gov.sa" className="input-enterprise" />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.address")}</label>
+            <input type="text" placeholder={t("entity.address")} className="input-enterprise" />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.description")}</label>
+            <textarea rows={3} placeholder={t("entity.description")} className="input-enterprise h-auto resize-none" />
+          </div>
+        </div>
+        <div className="mt-6 flex items-center justify-end gap-3">
+          <button onClick={onClose} className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+            {t("entity.cancel")}
+          </button>
+          <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+            {t("entity.save")}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Filter, Plus, MoreHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Filter, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const contacts = Array.from({ length: 20 }, (_, i) => ({
   id: `c-${i + 1}`,
@@ -16,6 +17,7 @@ const contacts = Array.from({ length: 20 }, (_, i) => ({
 export default function ContactsList() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const { t } = useTranslation();
 
   const filtered = contacts.filter(
     (c) =>
@@ -31,15 +33,15 @@ export default function ContactsList() {
     <div className="page-container space-y-6 animate-fade-in">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="page-title">Contacts</h1>
-          <p className="page-subtitle">{contacts.length} total contacts</p>
+          <h1 className="page-title">{t("page.contacts")}</h1>
+          <p className="page-subtitle">{contacts.length} {t("contacts.totalContacts")}</p>
         </div>
         <Link
           to="/contacts/new"
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
-          Add Contact
+          {t("contacts.addContact")}
         </Link>
       </div>
 
@@ -47,18 +49,18 @@ export default function ContactsList() {
       <div className="card-enterprise">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-3" />
             <input
               type="text"
-              placeholder="Search contacts by name, email..."
+              placeholder={t("contacts.search")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-enterprise pl-9"
+              className="input-enterprise pl-9 rtl:pl-3 rtl:pr-9"
             />
           </div>
           <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
             <Filter className="h-4 w-4" />
-            Filters
+            {t("contacts.filters")}
           </button>
         </div>
       </div>
@@ -69,12 +71,12 @@ export default function ContactsList() {
           <table className="table-enterprise">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Email / Phone</th>
-                <th>Completeness</th>
-                <th>Status</th>
-                <th className="w-10"></th>
+                <th>{t("contacts.name")}</th>
+                <th>{t("contacts.type")}</th>
+                <th>{t("contacts.emailPhone")}</th>
+                <th>{t("contacts.completeness")}</th>
+                <th>{t("contacts.status")}</th>
+                <th className="w-28">{/* Actions */}</th>
               </tr>
             </thead>
             <tbody>
@@ -101,9 +103,17 @@ export default function ContactsList() {
                   </td>
                   <td><span className={`badge-status ${statusBadge(c.status)}`}>{c.status}</span></td>
                   <td>
-                    <button className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <Link to={`/contacts/${c.id}`} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title={t("common.view")}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                      <Link to={`/contacts/${c.id}/edit`} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" title={t("common.update")}>
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                      <button className="rounded-lg p-1.5 text-destructive hover:bg-destructive/10 transition-colors" title={t("common.delete")}>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -113,7 +123,7 @@ export default function ContactsList() {
 
         {/* Pagination */}
         <div className="flex items-center justify-between border-t border-border px-4 py-3">
-          <p className="text-sm text-muted-foreground">Showing 1-20 of {filtered.length}</p>
+          <p className="text-sm text-muted-foreground">{t("contacts.showing")} 1-20 {t("contacts.of")} {filtered.length}</p>
           <div className="flex items-center gap-1">
             <button className="rounded-lg p-2 text-muted-foreground hover:bg-muted" disabled><ChevronLeft className="h-4 w-4" /></button>
             <button className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground">1</button>
@@ -136,11 +146,11 @@ export default function ContactsList() {
             </div>
             <div className="mt-3 space-y-1.5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Type</span>
+                <span className="text-muted-foreground">{t("contacts.type")}</span>
                 <span className="badge-status badge-type">{c.type}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Completeness</span>
+                <span className="text-muted-foreground">{t("contacts.completeness")}</span>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-12 overflow-hidden rounded-full bg-muted">
                     <div className={`h-full rounded-full ${completenessColor(c.completeness)}`} style={{ width: `${c.completeness}%` }} />

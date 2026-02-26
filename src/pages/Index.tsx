@@ -1,5 +1,6 @@
-import { Users, Building2, CheckCircle, GitCompare, TrendingUp, TrendingDown } from "lucide-react";
+import { Users, Building2, CheckCircle, GitCompare } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
+import { useTranslation } from "@/hooks/useTranslation";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const contactsByType = [
@@ -20,57 +21,34 @@ const entitiesByType = [
 const COLORS = ["hsl(217, 91%, 60%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)", "hsl(199, 89%, 48%)"];
 
 const recentActivity = [
-  { id: 1, action: "Contact Created", name: "Mohammed Al-Rashid", nameAr: "محمد الرشيد", type: "Individual", time: "2 min ago" },
-  { id: 2, action: "Entity Updated", name: "Ministry of Finance", nameAr: "وزارة المالية", type: "Ministry", time: "15 min ago" },
-  { id: 3, action: "Duplicate Found", name: "Sara Ahmed", nameAr: "سارة أحمد", type: "Individual", time: "1 hour ago" },
-  { id: 4, action: "Contact Merged", name: "National Bank", nameAr: "البنك الوطني", type: "Organization", time: "2 hours ago" },
-  { id: 5, action: "Contact Created", name: "Ahmad Hassan", nameAr: "أحمد حسن", type: "Individual", time: "3 hours ago" },
+  { id: 1, action: "Contact Created", actionAr: "تم إنشاء جهة اتصال", name: "Mohammed Al-Rashid", nameAr: "محمد الرشيد", type: "Individual", time: "2 min ago", timeAr: "قبل دقيقتين" },
+  { id: 2, action: "Entity Updated", actionAr: "تم تحديث جهة", name: "Ministry of Finance", nameAr: "وزارة المالية", type: "Ministry", time: "15 min ago", timeAr: "قبل 15 دقيقة" },
+  { id: 3, action: "Duplicate Found", actionAr: "تم العثور على تكرار", name: "Sara Ahmed", nameAr: "سارة أحمد", type: "Individual", time: "1 hour ago", timeAr: "قبل ساعة" },
+  { id: 4, action: "Contact Merged", actionAr: "تم دمج جهة اتصال", name: "National Bank", nameAr: "البنك الوطني", type: "Organization", time: "2 hours ago", timeAr: "قبل ساعتين" },
+  { id: 5, action: "Contact Created", actionAr: "تم إنشاء جهة اتصال", name: "Ahmad Hassan", nameAr: "أحمد حسن", type: "Individual", time: "3 hours ago", timeAr: "قبل 3 ساعات" },
 ];
 
 export default function Dashboard() {
+  const { t, lang } = useTranslation();
+  const isAr = lang === "ar";
+
   return (
     <div className="page-container space-y-6 animate-fade-in">
       <div>
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Overview of your master data management platform</p>
+        <h1 className="page-title">{t("page.dashboard")}</h1>
+        <p className="page-subtitle">{t("dashboard.overview")}</p>
       </div>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KPICard
-          title="Total Contacts"
-          value="3,860"
-          change="+12.5% from last month"
-          changeType="positive"
-          icon={Users}
-        />
-        <KPICard
-          title="Total Entities"
-          value="392"
-          change="+3.2% from last month"
-          changeType="positive"
-          icon={Building2}
-        />
-        <KPICard
-          title="Avg. Completeness"
-          value="78.4%"
-          change="-2.1% from last month"
-          changeType="negative"
-          icon={CheckCircle}
-        />
-        <KPICard
-          title="Pending Duplicates"
-          value="47"
-          change="12 resolved this week"
-          changeType="neutral"
-          icon={GitCompare}
-        />
+        <KPICard title={t("dashboard.totalContacts")} value="3,860" change={`+12.5% ${t("common.fromLastMonth")}`} changeType="positive" icon={Users} />
+        <KPICard title={t("dashboard.totalEntities")} value="392" change={`+3.2% ${t("common.fromLastMonth")}`} changeType="positive" icon={Building2} />
+        <KPICard title={t("dashboard.avgCompleteness")} value="78.4%" change={`-2.1% ${t("common.fromLastMonth")}`} changeType="negative" icon={CheckCircle} />
+        <KPICard title={t("dashboard.pendingDuplicates")} value="47" change={`12 ${t("common.resolvedThisWeek")}`} changeType="neutral" icon={GitCompare} />
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Contacts by Type</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.contactsByType")}</h3>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie data={contactsByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
@@ -85,7 +63,7 @@ export default function Dashboard() {
         </div>
 
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Entities by Type</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.entitiesByType")}</h3>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={entitiesByType}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
@@ -98,31 +76,30 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Recent Activity */}
       <div className="card-enterprise">
-        <h3 className="mb-4 text-base font-semibold text-foreground">Recent Activity</h3>
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.recentActivity")}</h3>
         <div className="overflow-x-auto">
           <table className="table-enterprise">
             <thead>
               <tr>
-                <th>Action</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Time</th>
+                <th>{t("dashboard.action")}</th>
+                <th>{t("dashboard.name")}</th>
+                <th>{t("dashboard.type")}</th>
+                <th>{t("dashboard.time")}</th>
               </tr>
             </thead>
             <tbody>
               {recentActivity.map((item) => (
                 <tr key={item.id}>
-                  <td className="font-medium text-foreground">{item.action}</td>
+                  <td className="font-medium text-foreground">{isAr ? item.actionAr : item.action}</td>
                   <td>
                     <div>
-                      <p className="font-medium text-foreground">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.nameAr}</p>
+                      <p className="font-medium text-foreground">{isAr ? item.nameAr : item.name}</p>
+                      <p className="text-xs text-muted-foreground">{isAr ? item.name : item.nameAr}</p>
                     </div>
                   </td>
                   <td><span className="badge-status badge-type">{item.type}</span></td>
-                  <td className="text-muted-foreground">{item.time}</td>
+                  <td className="text-muted-foreground">{isAr ? item.timeAr : item.time}</td>
                 </tr>
               ))}
             </tbody>
