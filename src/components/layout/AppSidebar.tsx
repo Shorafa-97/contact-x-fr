@@ -7,9 +7,6 @@ import {
   Building2,
   GitCompare,
   BarChart3,
-  Briefcase,
-  Shield,
-  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,8 +16,6 @@ const navItems = [
   { labelKey: "nav.entities", icon: Building2, path: "/entities" },
   { labelKey: "nav.duplicates", icon: GitCompare, path: "/duplicates" },
   { labelKey: "nav.analytics", icon: BarChart3, path: "/analytics" },
-  { labelKey: "nav.executive", icon: Briefcase, path: "/executive" },
-  { labelKey: "nav.governance", icon: Shield, path: "/governance" },
 ];
 
 export default function AppSidebar() {

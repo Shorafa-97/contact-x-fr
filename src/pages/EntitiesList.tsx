@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Search, Filter, Plus, Building2, Eye, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -13,11 +13,10 @@ const entities = Array.from({ length: 15 }, (_, i) => ({
   status: ["Active", "Active", "Inactive"][i % 3],
 }));
 
-const existingEntities = entities.map(e => ({ id: e.id, nameEn: e.nameEn }));
+
 
 export default function EntitiesList() {
   const [search, setSearch] = useState("");
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { t } = useTranslation();
 
   const filtered = entities.filter(
@@ -31,13 +30,13 @@ export default function EntitiesList() {
           <h1 className="page-title">{t("page.entities")}</h1>
           <p className="page-subtitle">{entities.length} {t("entities.totalEntities")}</p>
         </div>
-        <button
-          onClick={() => setShowCreateDialog(true)}
+        <Link
+          to="/entities/new"
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
           {t("entities.addEntity")}
-        </button>
+        </Link>
       </div>
 
       <div className="card-enterprise">
@@ -127,99 +126,6 @@ export default function EntitiesList() {
         ))}
       </div>
 
-      {/* Create Entity Dialog */}
-      {showCreateDialog && (
-        <CreateEntityDialog onClose={() => setShowCreateDialog(false)} existingEntities={existingEntities} />
-      )}
-    </div>
-  );
-}
-
-function CreateEntityDialog({ onClose, existingEntities }: { onClose: () => void; existingEntities: { id: string; nameEn: string }[] }) {
-  const { t } = useTranslation();
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 backdrop-blur-sm" onClick={onClose}>
-      <div className="mx-4 w-full max-w-2xl rounded-xl border border-border bg-card p-6" style={{ boxShadow: "var(--shadow-lg)" }} onClick={(e) => e.stopPropagation()}>
-        <h2 className="mb-6 text-lg font-semibold text-foreground">{t("entity.create")}</h2>
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.nameEn")}</label>
-              <input type="text" placeholder="Enter entity name" className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.nameAr")}</label>
-              <input type="text" placeholder="أدخل اسم الجهة" className="input-enterprise" dir="rtl" />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.code")}</label>
-              <input type="text" placeholder="e.g. MOF-001" className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.type")}</label>
-              <select className="input-enterprise">
-                <option value="">{t("form.select")}</option>
-                <option value="Ministry">{t("common.ministry")}</option>
-                <option value="Agency">{t("common.agency")}</option>
-                <option value="Department">{t("common.department")}</option>
-                <option value="Division">{t("common.division")}</option>
-                <option value="Unit">{t("common.unit")}</option>
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.parentEntity")}</label>
-              <select className="input-enterprise">
-                <option value="">{t("form.select")}</option>
-                {existingEntities.map(e => (
-                  <option key={e.id} value={e.id}>{e.nameEn}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.status")}</label>
-              <select className="input-enterprise">
-                <option value="Active">{t("common.active")}</option>
-                <option value="Inactive">{t("common.inactive")}</option>
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.email")}</label>
-              <input type="email" placeholder="entity@gov.sa" className="input-enterprise" />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.phone")}</label>
-              <input type="tel" placeholder="+966 1XXXXXXX" className="input-enterprise" />
-            </div>
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.website")}</label>
-            <input type="url" placeholder="https://www.example.gov.sa" className="input-enterprise" />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.address")}</label>
-            <input type="text" placeholder={t("entity.address")} className="input-enterprise" />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("entity.description")}</label>
-            <textarea rows={3} placeholder={t("entity.description")} className="input-enterprise h-auto resize-none" />
-          </div>
-        </div>
-        <div className="mt-6 flex items-center justify-end gap-3">
-          <button onClick={onClose} className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted">
-            {t("entity.cancel")}
-          </button>
-          <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-            {t("entity.save")}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

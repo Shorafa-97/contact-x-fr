@@ -16,7 +16,7 @@ export default function BottomNav() {
   const location = useLocation();
 
   // Pages accessible from "More"
-  const morePages = ["/analytics", "/executive", "/governance"];
+  const morePages = ["/analytics"];
   const isMoreActive = morePages.some((p) => location.pathname.startsWith(p)) || location.pathname === "/more";
 
   return (
