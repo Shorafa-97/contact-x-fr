@@ -9,6 +9,7 @@ const translations: Record<string, Record<Lang, string>> = {
   "nav.analytics": { en: "Analytics", ar: "التحليلات" },
   "nav.executive": { en: "Executive", ar: "التنفيذي" },
   "nav.governance": { en: "Governance", ar: "الحوكمة" },
+  "nav.more": { en: "More", ar: "المزيد" },
 
   // Header
   "header.home": { en: "Home", ar: "الرئيسية" },

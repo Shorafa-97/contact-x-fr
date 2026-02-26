@@ -1,6 +1,6 @@
 import { useLayout } from "@/contexts/LayoutContext";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Menu, Sun, Moon, Globe, ChevronRight, ChevronLeft, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Sun, Moon, Globe, ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 const pageTitleKeys: Record<string, string> = {
@@ -28,12 +28,6 @@ export default function AppHeader() {
     >
       {/* Left */}
       <div className="flex items-center gap-3">
-        <button
-          onClick={toggleSidebar}
-          className="rounded-lg p-2 text-muted-foreground hover:bg-muted lg:hidden"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
         {/* Collapse toggle - desktop only */}
         <button
           onClick={toggleCollapse}
