@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Check, X, AlertTriangle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Check, X, AlertTriangle, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -92,11 +93,21 @@ export default function DuplicateResolution() {
                         <span className="text-xs font-semibold uppercase text-muted-foreground">
                           {label === "A" ? t("duplicates.recordA") : t("duplicates.recordB")}
                         </span>
-                        {isMain && (
-                          <span className="badge-status bg-primary/10 text-primary text-[10px]">
-                            {t("duplicates.mainProfile")}
-                          </span>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {isMain && (
+                            <span className="badge-status bg-primary/10 text-primary text-[10px]">
+                              {t("duplicates.mainProfile")}
+                            </span>
+                          )}
+                          <Link
+                            to={`/contacts/c-${dup.id}${label}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="rounded-lg p-1.5 text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
+                            title={t("common.view")}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </div>
                       </div>
                       {Object.entries(contact).map(([key, value]) => (
                         <div key={key} className="flex items-center justify-between">
