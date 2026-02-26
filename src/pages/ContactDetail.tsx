@@ -2,12 +2,18 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Mail, Phone, MapPin, Briefcase, Calendar, Edit } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const tabs = ["Overview", "Relationships", "Audit Log"];
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function ContactDetail() {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState("Overview");
+  const { t } = useTranslation();
+  const tabs = [t("contact.overview"), t("contact.relationships"), t("contact.auditLog")];
+  const [activeTab, setActiveTab] = useState(tabs[0]);
+
+  // Update activeTab when language changes
+  const tabKeys = ["contact.overview", "contact.relationships", "contact.auditLog"];
+  const activeTabIndex = tabs.indexOf(activeTab);
+  const resolvedTab = activeTabIndex >= 0 ? activeTabIndex : 0;
 
   const contact = {
     id,
@@ -29,13 +35,11 @@ export default function ContactDetail() {
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
-      {/* Back */}
       <Link to="/contacts" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
         <ArrowLeft className="h-4 w-4" />
-        Back to Contacts
+        {t("contact.backToContacts")}
       </Link>
 
-      {/* Profile Header */}
       <div className="card-enterprise">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
@@ -53,14 +57,13 @@ export default function ContactDetail() {
           </div>
           <Link to={`/contacts/${id}/edit`} className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted">
             <Edit className="h-4 w-4" />
-            Edit
+            {t("contact.edit")}
           </Link>
         </div>
 
-        {/* Completeness */}
         <div className="mt-6">
           <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-foreground">Profile Completeness</span>
+            <span className="font-medium text-foreground">{t("contact.profileCompleteness")}</span>
             <span className="font-semibold text-foreground">{contact.completeness}%</span>
           </div>
           <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-muted">
@@ -69,12 +72,11 @@ export default function ContactDetail() {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="border-b border-border">
         <div className="flex gap-0 overflow-x-auto">
-          {tabs.map((tab) => (
+          {tabs.map((tab, i) => (
             <button
-              key={tab}
+              key={i}
               onClick={() => setActiveTab(tab)}
               className={cn(
                 "whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors",
@@ -89,32 +91,31 @@ export default function ContactDetail() {
         </div>
       </div>
 
-      {/* Tab Content */}
-      {activeTab === "Overview" && (
+      {resolvedTab === 0 && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="card-enterprise space-y-4">
-            <h3 className="text-base font-semibold text-foreground">Contact Information</h3>
+            <h3 className="text-base font-semibold text-foreground">{t("contact.contactInfo")}</h3>
             <div className="space-y-3">
-              <InfoRow icon={Mail} label="Email" value={contact.email} />
-              <InfoRow icon={Phone} label="Phone" value={contact.phone} />
-              <InfoRow icon={MapPin} label="Address" value={contact.address} />
+              <InfoRow icon={Mail} label={t("contact.email")} value={contact.email} />
+              <InfoRow icon={Phone} label={t("contact.phone")} value={contact.phone} />
+              <InfoRow icon={MapPin} label={t("contact.address")} value={contact.address} />
             </div>
           </div>
           <div className="card-enterprise space-y-4">
-            <h3 className="text-base font-semibold text-foreground">Professional Information</h3>
+            <h3 className="text-base font-semibold text-foreground">{t("contact.professionalInfo")}</h3>
             <div className="space-y-3">
-              <InfoRow icon={Briefcase} label="Organization" value={contact.organization} />
-              <InfoRow icon={Briefcase} label="Position" value={contact.position} />
-              <InfoRow icon={Calendar} label="Created" value={contact.createdAt} />
-              <InfoRow icon={Calendar} label="Updated" value={contact.updatedAt} />
+              <InfoRow icon={Briefcase} label={t("contact.organization")} value={contact.organization} />
+              <InfoRow icon={Briefcase} label={t("contact.position")} value={contact.position} />
+              <InfoRow icon={Calendar} label={t("contact.created")} value={contact.createdAt} />
+              <InfoRow icon={Calendar} label={t("contact.updated")} value={contact.updatedAt} />
             </div>
           </div>
         </div>
       )}
 
-      {activeTab === "Relationships" && (
+      {resolvedTab === 1 && (
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Related Entities</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("contact.relatedEntities")}</h3>
           <div className="space-y-3">
             {[
               { name: "Ministry of Finance", nameAr: "وزارة المالية", role: "Employee", type: "Ministry" },
@@ -135,17 +136,17 @@ export default function ContactDetail() {
         </div>
       )}
 
-      {activeTab === "Audit Log" && (
+      {resolvedTab === 2 && (
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">Activity History</h3>
+          <h3 className="mb-4 text-base font-semibold text-foreground">{t("contact.activityHistory")}</h3>
           <div className="space-y-4">
             {[
               { action: "Profile updated", user: "admin", time: "2025-02-20 14:30", details: "Email address changed" },
               { action: "Relationship added", user: "admin", time: "2025-02-18 09:15", details: "Linked to IT Advisory Board" },
               { action: "Contact created", user: "system", time: "2024-01-15 10:00", details: "Initial record created via import" },
             ].map((log, i) => (
-              <div key={i} className="relative border-l-2 border-border pl-4">
-                <div className="absolute -left-1.5 top-1 h-3 w-3 rounded-full border-2 border-primary bg-card" />
+              <div key={i} className="relative border-l-2 border-border pl-4 rtl:border-l-0 rtl:border-r-2 rtl:pl-0 rtl:pr-4">
+                <div className="absolute -left-1.5 top-1 h-3 w-3 rounded-full border-2 border-primary bg-card rtl:left-auto rtl:-right-1.5" />
                 <p className="font-medium text-foreground">{log.action}</p>
                 <p className="text-sm text-muted-foreground">{log.details}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{log.time} · {log.user}</p>

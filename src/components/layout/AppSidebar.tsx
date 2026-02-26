@@ -1,5 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useLayout } from "@/contexts/LayoutContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   LayoutDashboard,
   Users,
@@ -8,24 +9,23 @@ import {
   BarChart3,
   Briefcase,
   Shield,
-  ChevronLeft,
-  ChevronRight,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
-  { label: "Contacts", icon: Users, path: "/contacts" },
-  { label: "Entities", icon: Building2, path: "/entities" },
-  { label: "Duplicates", icon: GitCompare, path: "/duplicates" },
-  { label: "Analytics", icon: BarChart3, path: "/analytics" },
-  { label: "Executive", icon: Briefcase, path: "/executive" },
-  { label: "Governance", icon: Shield, path: "/governance" },
+  { labelKey: "nav.dashboard", icon: LayoutDashboard, path: "/" },
+  { labelKey: "nav.contacts", icon: Users, path: "/contacts" },
+  { labelKey: "nav.entities", icon: Building2, path: "/entities" },
+  { labelKey: "nav.duplicates", icon: GitCompare, path: "/duplicates" },
+  { labelKey: "nav.analytics", icon: BarChart3, path: "/analytics" },
+  { labelKey: "nav.executive", icon: Briefcase, path: "/executive" },
+  { labelKey: "nav.governance", icon: Shield, path: "/governance" },
 ];
 
 export default function AppSidebar() {
-  const { sidebarOpen, sidebarCollapsed, toggleSidebar, toggleCollapse, dir } = useLayout();
+  const { sidebarOpen, sidebarCollapsed, toggleSidebar, dir } = useLayout();
+  const { t } = useTranslation();
   const location = useLocation();
 
   return (
@@ -41,14 +41,14 @@ export default function AppSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 z-50 flex h-full flex-col border-border bg-sidebar transition-all duration-300 lg:relative lg:z-auto",
+          "fixed top-0 z-50 flex h-screen flex-col border-border bg-sidebar transition-all duration-300 lg:sticky lg:top-0 lg:z-auto",
           dir === "rtl" ? "right-0 border-l" : "left-0 border-r",
           sidebarCollapsed ? "w-20" : "w-[280px]",
           sidebarOpen ? "translate-x-0" : dir === "rtl" ? "translate-x-full lg:translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo area */}
-        <div className="flex h-16 items-center justify-between border-b border-border px-4">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
           {!sidebarCollapsed && (
             <span className="text-lg font-bold text-foreground">Contacts X</span>
           )}
@@ -78,28 +78,11 @@ export default function AppSidebar() {
                 )}
               >
                 <item.icon className="h-5 w-5 shrink-0" />
-                {!sidebarCollapsed && <span>{item.label}</span>}
+                {!sidebarCollapsed && <span>{t(item.labelKey)}</span>}
               </Link>
             );
           })}
         </nav>
-
-        {/* Collapse button - desktop only */}
-        <div className="hidden border-t border-border p-3 lg:block">
-          <button
-            onClick={toggleCollapse}
-            className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-hover hover:text-foreground"
-          >
-            {sidebarCollapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <>
-                <ChevronLeft className="h-4 w-4" />
-                <span>Collapse</span>
-              </>
-            )}
-          </button>
-        </div>
       </aside>
     </>
   );
