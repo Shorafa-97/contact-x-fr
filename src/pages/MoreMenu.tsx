@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
-import { BarChart3, ChevronRight } from "lucide-react";
+import { Search, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const moreItems = [
-  { labelKey: "nav.analytics", icon: BarChart3, path: "/analytics" },
+  { labelKey: "nav.search", icon: Search, path: "/search" },
 ];
 
 export default function MoreMenu() {

@@ -218,6 +218,20 @@ const translations: Record<string, Record<Lang, string>> = {
   // Contact form primary
   "form.setPrimary": { en: "Set as primary", ar: "تعيين كأساسي" },
   "form.address": { en: "Address", ar: "العنوان" },
+
+  // Dashboard analytics tab
+  "dashboard.tabAnalytics": { en: "Analytics", ar: "التحليلات" },
+
+  // Search
+  "nav.search": { en: "Search", ar: "بحث" },
+  "search.title": { en: "Search", ar: "بحث" },
+  "search.subtitle": { en: "Search across contacts and entities", ar: "البحث في جهات الاتصال والجهات" },
+  "search.placeholder": { en: "Search by name, email, or organization...", ar: "البحث بالاسم أو البريد أو المنظمة..." },
+  "search.all": { en: "All", ar: "الكل" },
+  "search.contacts": { en: "Contacts", ar: "جهات الاتصال" },
+  "search.entities": { en: "Entities", ar: "الجهات" },
+  "search.startTyping": { en: "Start typing to search...", ar: "ابدأ الكتابة للبحث..." },
+  "search.noResults": { en: "No results found", ar: "لا توجد نتائج" },
 };
 
 export function t(key: string, lang: Lang): string {

@@ -18,6 +18,15 @@ export default function EntityDetail() {
   const { id } = useParams();
   const { t } = useTranslation();
 
+  // In a real app, fetch by id. Using mock data here.
+  const entity = {
+    id,
+    nameEn: "Ministry of Finance",
+    nameAr: "وزارة المالية",
+    type: "Ministry",
+    status: "Active",
+  };
+
   return (
     <div className="page-container space-y-6 animate-fade-in">
       <Link to="/entities" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -31,8 +40,8 @@ export default function EntityDetail() {
             <Building2 className="h-7 w-7 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-foreground">Ministry of Finance</h1>
-            <p className="text-sm text-muted-foreground">وزارة المالية</p>
+            <h1 className="text-xl font-semibold text-foreground">{entity.nameEn}</h1>
+            <p className="text-sm text-muted-foreground">{entity.nameAr}</p>
             <div className="mt-1 flex items-center gap-2">
               <span className="badge-status badge-type">Ministry</span>
               <span className="badge-status badge-active">{t("common.active")}</span>
