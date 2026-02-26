@@ -9,7 +9,7 @@ export default function ContactForm() {
   const { t } = useTranslation();
 
   const [emails, setEmails] = useState([{ value: "", primary: true }]);
-  const [phones, setPhones] = useState([{ value: "", primary: true }]);
+  const [phones, setPhones] = useState([{ value: "", countryCode: "+966", primary: true }]);
   const [addresses, setAddresses] = useState([{ line: "", city: "", country: "", postalCode: "", primary: true }]);
 
   const addEmail = () => setEmails([...emails, { value: "", primary: false }]);
@@ -20,7 +20,7 @@ export default function ContactForm() {
   };
   const setPrimaryEmail = (i: number) => setEmails(emails.map((e, idx) => ({ ...e, primary: idx === i })));
 
-  const addPhone = () => setPhones([...phones, { value: "", primary: false }]);
+  const addPhone = () => setPhones([...phones, { value: "", countryCode: "+966", primary: false }]);
   const removePhone = (i: number) => {
     const next = phones.filter((_, idx) => idx !== i);
     if (next.length > 0 && !next.some(p => p.primary)) next[0].primary = true;
@@ -215,8 +215,32 @@ export default function ContactForm() {
           </div>
           <div className="space-y-3">
             {phones.map((phone, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <input type="tel" placeholder="+966 5XXXXXXXX" className="input-enterprise flex-1" />
+              <div key={i} className="flex items-center gap-2">
+                <select
+                  value={phone.countryCode}
+                  onChange={(e) => {
+                    const next = [...phones];
+                    next[i] = { ...next[i], countryCode: e.target.value };
+                    setPhones(next);
+                  }}
+                  className="input-enterprise w-28 shrink-0"
+                >
+                  <option value="+966">🇸🇦 +966</option>
+                  <option value="+971">🇦🇪 +971</option>
+                  <option value="+973">🇧🇭 +973</option>
+                  <option value="+974">🇶🇦 +974</option>
+                  <option value="+968">🇴🇲 +968</option>
+                  <option value="+965">🇰🇼 +965</option>
+                  <option value="+20">🇪🇬 +20</option>
+                  <option value="+962">🇯🇴 +962</option>
+                  <option value="+961">🇱🇧 +961</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+92">🇵🇰 +92</option>
+                  <option value="+63">🇵🇭 +63</option>
+                </select>
+                <input type="tel" placeholder="5XXXXXXXX" className="input-enterprise flex-1" />
                 <button
                   onClick={() => setPrimaryPhone(i)}
                   className={`rounded-lg p-2 transition-colors ${phone.primary ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
