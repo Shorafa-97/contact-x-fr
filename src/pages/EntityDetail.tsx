@@ -92,6 +92,10 @@ export default function EntityDetail() {
             <p className="text-sm font-medium text-foreground">{entity.phone}</p>
           </div>
         </div>
+      </div>
+
+      <div className="card-enterprise">
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("entities.orgHierarchy")}</h3>
         <div className="space-y-2">
           {childEntities.map((child) => (
             <div key={child.id} className="flex items-center justify-between rounded-lg border border-border p-3 transition-colors hover:bg-muted/30">
