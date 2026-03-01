@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Building2, ChevronRight } from "lucide-react";
+import { ArrowLeft, Building2, ChevronRight, Plus } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Progress } from "@/components/ui/progress";
 
@@ -121,7 +121,13 @@ export default function EntityDetail() {
       <div className="card-enterprise">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-base font-semibold text-foreground">{t("entities.relatedContacts")}</h3>
-          <span className="text-sm text-muted-foreground">{relatedContacts.length} {t("common.contacts")}</span>
+          <div className="flex items-center gap-2">
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+              <Plus className="h-3.5 w-3.5" />
+              {t("common.addRelation")}
+            </button>
+            <span className="text-sm text-muted-foreground">{relatedContacts.length} {t("common.contacts")}</span>
+          </div>
         </div>
         <div className="space-y-2">
           {relatedContacts.map((contact) => (
