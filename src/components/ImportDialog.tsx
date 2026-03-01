@@ -3,6 +3,7 @@ import { Upload, X, Download, FileSpreadsheet, AlertCircle, CheckCircle2 } from 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useIsMobile } from "@/hooks/use-mobile";
 import * as XLSX from "xlsx";
 
 export interface ImportField {
@@ -29,6 +30,7 @@ interface ParsedRow {
 
 export default function ImportDialog({ open, onOpenChange, domain, fields, onImport }: ImportDialogProps) {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -119,7 +121,7 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <DialogHeader>
           <DialogTitle>{t(`import.title.${domain}`)}</DialogTitle>
         </DialogHeader>
@@ -203,41 +205,79 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
                   </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-lg border border-border">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border bg-muted/50">
-                        <th className="px-3 py-2 text-left font-medium text-muted-foreground w-10">#</th>
-                        {fields.slice(0, 8).map((f) => (
-                          <th key={f.key} className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap text-xs uppercase">
-                            {f.label}
-                          </th>
+                {/* Desktop: Table view */}
+                {!isMobile ? (
+                  <div className="rounded-lg border border-border overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/50">
+                          <th className="px-3 py-2 text-left font-medium text-muted-foreground w-10">#</th>
+                          {fields.slice(0, 8).map((f) => (
+                            <th key={f.key} className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap text-xs uppercase">
+                              {f.label}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {parsedRows.map((row, i) => (
+                          <tr
+                            key={i}
+                            className={`border-b border-border last:border-0 ${!row.valid ? "bg-destructive/5" : ""}`}
+                          >
+                            <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
+                            {fields.slice(0, 8).map((f) => {
+                              const hasError = row.errors.some((e) => e.startsWith(f.label));
+                              return (
+                                <td key={f.key} className={`px-3 py-2 whitespace-nowrap ${hasError ? "text-destructive" : "text-foreground"}`}>
+                                  <div className="flex items-center gap-1">
+                                    {row.data[f.key] || "—"}
+                                    {hasError && <AlertCircle className="h-3 w-3 text-destructive flex-shrink-0" />}
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          </tr>
                         ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {parsedRows.map((row, i) => (
-                        <tr
-                          key={i}
-                          className={`border-b border-border last:border-0 ${!row.valid ? "bg-destructive/5" : ""}`}
-                        >
-                          <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
-                          {fields.slice(0, 8).map((f) => {
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  /* Mobile: Card view */
+                  <div className="space-y-3">
+                    {parsedRows.map((row, i) => (
+                      <div
+                        key={i}
+                        className={`rounded-lg border p-3 space-y-2 ${!row.valid ? "border-destructive/50 bg-destructive/5" : "border-border bg-muted/30"}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-muted-foreground">#{i + 1}</span>
+                          {row.valid ? (
+                            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-destructive" />
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                          {fields.slice(0, 6).map((f) => {
                             const hasError = row.errors.some((e) => e.startsWith(f.label));
                             return (
-                              <td key={f.key} className={`px-3 py-2 whitespace-nowrap ${hasError ? "text-destructive" : "text-foreground"}`}>
-                                <div className="flex items-center gap-1">
+                              <div key={f.key}>
+                                <p className="text-[10px] uppercase text-muted-foreground">{f.label}</p>
+                                <p className={`text-xs truncate ${hasError ? "text-destructive" : "text-foreground"}`}>
                                   {row.data[f.key] || "—"}
-                                  {hasError && <AlertCircle className="h-3 w-3 text-destructive flex-shrink-0" />}
-                                </div>
-                              </td>
+                                </p>
+                              </div>
                             );
                           })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                        </div>
+                        {!row.valid && (
+                          <p className="text-[10px] text-destructive">{row.errors.join(", ")}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {invalidCount > 0 && (
                   <div className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive space-y-2">
