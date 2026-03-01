@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Mail, Phone, MapPin, Briefcase, Calendar, Edit } from "lucide-react";
+import { ArrowLeft, Mail, Phone, MapPin, Briefcase, Calendar, Edit, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -116,7 +116,13 @@ export default function ContactDetail() {
 
       {resolvedTab === 1 && (
         <div className="card-enterprise">
-          <h3 className="mb-4 text-base font-semibold text-foreground">{t("contact.relatedEntities")}</h3>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-base font-semibold text-foreground">{t("contact.relatedEntities")}</h3>
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+              <Plus className="h-3.5 w-3.5" />
+              {t("common.addRelation")}
+            </button>
+          </div>
           <div className="space-y-3">
             {[
               { name: "Ministry of Finance", nameAr: "وزارة المالية", role: "Employee", type: "Ministry" },

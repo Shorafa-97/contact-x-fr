@@ -188,6 +188,7 @@ const translations: Record<string, Record<Lang, string>> = {
   "common.active": { en: "Active", ar: "نشط" },
   "common.inactive": { en: "Inactive", ar: "غير نشط" },
   "common.pending": { en: "Pending", ar: "معلق" },
+  "common.addRelation": { en: "Add Relation", ar: "إضافة علاقة" },
   "common.view": { en: "View", ar: "عرض" },
   "common.update": { en: "Update", ar: "تعديل" },
   "common.delete": { en: "Delete", ar: "حذف" },
