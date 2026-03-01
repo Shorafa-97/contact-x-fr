@@ -90,12 +90,11 @@ export default function ContactForm() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.contactType")}</label>
-              <select className="input-enterprise">
-                <option value="">{t("form.select")}</option>
-                <option value="Individual">{t("common.individual")}</option>
-                <option value="Organization">{t("common.organization")}</option>
-                <option value="Government">{t("common.government")}</option>
-                <option value="Non-Profit">{t("common.nonProfit")}</option>
+              <select className="input-enterprise" defaultValue="citizen">
+                <option value="citizen">Citizen</option>
+                <option value="employee">Employee</option>
+                <option value="external">External</option>
+                <option value="vip">VIP</option>
               </select>
             </div>
             <div>
