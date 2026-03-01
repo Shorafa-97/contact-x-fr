@@ -5,20 +5,20 @@ import { useTranslation } from "@/hooks/useTranslation";
 import ImportDialog, { ImportField } from "@/components/ImportDialog";
 
 const contactImportFields: ImportField[] = [
-  { key: "firstName", label: "FIRSTNAME", required: true },
-  { key: "lastName", label: "LASTNAME", required: true },
+  { key: "firstName", label: "FIRSTNAME", required: true, validate: (v) => v.length >= 2 && v.length <= 100 },
+  { key: "lastName", label: "LASTNAME", required: true, validate: (v) => v.length >= 2 && v.length <= 100 },
   { key: "prefix", label: "PREFIX" },
-  { key: "middleName", label: "MIDDLENAME" },
+  { key: "middleName", label: "MIDDLENAME", validate: (v) => v.length <= 100 },
   { key: "suffix", label: "SUFFIX" },
-  { key: "firstNameAr", label: "FIRSTNAMEAR" },
-  { key: "lastNameAr", label: "LASTNAMEAR" },
+  { key: "firstNameAr", label: "FIRSTNAMEAR", validate: (v) => /[\u0600-\u06FF]/.test(v) },
+  { key: "lastNameAr", label: "LASTNAMEAR", validate: (v) => /[\u0600-\u06FF]/.test(v) },
   { key: "prefixAr", label: "PREFIXAR" },
   { key: "middleNameAr", label: "MIDDLENAMEAR" },
   { key: "suffixAr", label: "SUFFIXAR" },
-  { key: "email", label: "EMAIL", validate: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
-  { key: "phone", label: "PHONE" },
-  { key: "type", label: "TYPE" },
-  { key: "nationalId", label: "NATIONALID" },
+  { key: "email", label: "EMAIL", required: true, validate: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+  { key: "phone", label: "PHONE", required: true, validate: (v) => /^\+?\d[\d\s\-]{6,18}$/.test(v) },
+  { key: "type", label: "TYPE", required: true, validate: (v) => ["citizen", "employee", "external", "vip"].includes(v.toLowerCase()) },
+  { key: "nationalId", label: "NATIONALID", validate: (v) => /^[A-Za-z0-9\-]{4,20}$/.test(v) },
 ];
 
 const contacts = Array.from({ length: 20 }, (_, i) => ({

@@ -10,6 +10,7 @@ export interface ImportField {
   label: string;
   required?: boolean;
   validate?: (value: string) => boolean;
+  validationHint?: string;
 }
 
 interface ImportDialogProps {
@@ -239,9 +240,20 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
                 </div>
 
                 {invalidCount > 0 && (
-                  <div className="flex items-start gap-2 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <p>{t("import.fixErrors")}</p>
+                  <div className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive space-y-2">
+                    <div className="flex items-center gap-2 font-medium">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                      <p>{t("import.fixErrors")}</p>
+                    </div>
+                    <ul className="ml-6 list-disc space-y-1 text-xs">
+                      {parsedRows.map((row, i) =>
+                        !row.valid ? (
+                          <li key={i}>
+                            Row {i + 1}: {row.errors.join(", ")}
+                          </li>
+                        ) : null
+                      )}
+                    </ul>
                   </div>
                 )}
               </>

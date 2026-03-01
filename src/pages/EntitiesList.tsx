@@ -5,11 +5,11 @@ import { useTranslation } from "@/hooks/useTranslation";
 import ImportDialog, { ImportField } from "@/components/ImportDialog";
 
 const entityImportFields: ImportField[] = [
-  { key: "nameEn", label: "NAME_EN", required: true },
-  { key: "nameAr", label: "NAME_AR", required: true },
+  { key: "nameEn", label: "NAME_EN", required: true, validate: (v) => v.length >= 2 && v.length <= 200 },
+  { key: "nameAr", label: "NAME_AR", required: true, validate: (v) => /[\u0600-\u06FF]/.test(v) },
   { key: "entityType", label: "ENTITY_TYPE", required: true, validate: (v) => ["public", "semi-government", "private", "international", "ngo"].includes(v.toLowerCase()) },
-  { key: "registrationId", label: "REGISTRATION_ID" },
-  { key: "country", label: "COUNTRY" },
+  { key: "registrationId", label: "REGISTRATION_ID", validate: (v) => /^[A-Za-z0-9\-]{3,30}$/.test(v) },
+  { key: "country", label: "COUNTRY", required: true, validate: (v) => v.length >= 2 },
   { key: "parentEntity", label: "PARENT_ENTITY" },
 ];
 
