@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Building2, ChevronRight } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { Progress } from "@/components/ui/progress";
 
 const childEntities = [
   { id: "e-sub-1", name: "Budget Department", nameAr: "إدارة الميزانية", type: "Department", contacts: 34 },
@@ -25,7 +26,17 @@ export default function EntityDetail() {
     nameAr: "وزارة المالية",
     type: "Ministry",
     status: "Active",
+    registrationId: "GOV-2024-001",
+    country: "Saudi Arabia",
+    parentEntity: "Council of Ministers",
+    email: "info@mof.gov.sa",
+    phone: "+966 11 405 0000",
   };
+
+  // Completeness calculation based on filled fields
+  const fields = [entity.nameEn, entity.nameAr, entity.type, entity.status, entity.registrationId, entity.country, entity.parentEntity, entity.email, entity.phone];
+  const filledFields = fields.filter(Boolean).length;
+  const completeness = Math.round((filledFields / fields.length) * 100);
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
@@ -39,19 +50,48 @@ export default function EntityDetail() {
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
             <Building2 className="h-7 w-7 text-primary" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="text-xl font-semibold text-foreground">{entity.nameEn}</h1>
             <p className="text-sm text-muted-foreground">{entity.nameAr}</p>
             <div className="mt-1 flex items-center gap-2">
-              <span className="badge-status badge-type">Ministry</span>
+              <span className="badge-status badge-type">{entity.type}</span>
               <span className="badge-status badge-active">{t("common.active")}</span>
             </div>
           </div>
         </div>
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">{t("entities.completeness")}</span>
+            <span className="text-xs font-semibold text-foreground">{completeness}%</span>
+          </div>
+          <Progress value={completeness} className="h-2" />
+        </div>
       </div>
 
       <div className="card-enterprise">
-        <h3 className="mb-4 text-base font-semibold text-foreground">{t("entities.orgHierarchy")}</h3>
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t("entities.details")}</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs text-muted-foreground">{t("entities.registrationId")}</p>
+            <p className="text-sm font-medium text-foreground">{entity.registrationId}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">{t("entities.country")}</p>
+            <p className="text-sm font-medium text-foreground">{entity.country}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">{t("entities.parentEntity")}</p>
+            <p className="text-sm font-medium text-foreground">{entity.parentEntity}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">{t("contacts.email")}</p>
+            <p className="text-sm font-medium text-foreground">{entity.email}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">{t("contacts.phone")}</p>
+            <p className="text-sm font-medium text-foreground">{entity.phone}</p>
+          </div>
+        </div>
         <div className="space-y-2">
           {childEntities.map((child) => (
             <div key={child.id} className="flex items-center justify-between rounded-lg border border-border p-3 transition-colors hover:bg-muted/30">

@@ -127,6 +127,11 @@ const translations: Record<string, Record<Lang, string>> = {
   "entities.backToEntities": { en: "Back to Entities", ar: "العودة إلى الجهات" },
   "entities.orgHierarchy": { en: "Organization Hierarchy", ar: "الهيكل التنظيمي" },
   "entities.relatedContacts": { en: "Related Contacts", ar: "جهات الاتصال ذات الصلة" },
+  "entities.completeness": { en: "Profile Completeness", ar: "اكتمال الملف" },
+  "entities.details": { en: "Entity Details", ar: "تفاصيل الجهة" },
+  "entities.registrationId": { en: "Registration ID", ar: "رقم التسجيل" },
+  "entities.country": { en: "Country", ar: "الدولة" },
+  "entities.parentEntity": { en: "Parent Entity", ar: "الجهة الأم" },
 
   // Entity form
   "entity.create": { en: "Create Entity", ar: "إنشاء جهة" },
