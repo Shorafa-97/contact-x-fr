@@ -12,6 +12,16 @@ const existingEntities = [
   { id: "e-5", nameEn: "Education Department" },
 ];
 
+const countries = [
+  "Saudi Arabia", "United Arab Emirates", "Bahrain", "Qatar", "Oman", "Kuwait",
+  "Egypt", "Jordan", "Lebanon", "Iraq", "Morocco", "Tunisia", "Algeria", "Libya", "Sudan",
+  "Syria", "Palestine", "Yemen", "Somalia", "Mauritania", "Djibouti", "Comoros",
+  "United States", "United Kingdom", "Germany", "France", "Canada", "Australia",
+  "India", "Pakistan", "Philippines", "Indonesia", "Bangladesh", "Sri Lanka",
+  "Turkey", "Iran", "China", "Japan", "South Korea", "Malaysia", "Singapore",
+  "Brazil", "Mexico", "South Africa", "Nigeria", "Kenya", "Ethiopia",
+];
+
 const addressTypes = ["Home", "Work", "Office", "Billing", "Shipping", "Other"];
 
 const countryCodes = [
@@ -98,7 +108,12 @@ export default function ContactForm() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.nationality")}</label>
-              <input type="text" placeholder={t("form.nationality")} className="input-enterprise" />
+              <select className="input-enterprise">
+                <option value="">{t("form.select")}</option>
+                {countries.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("form.gender")}</label>
