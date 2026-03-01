@@ -17,6 +17,7 @@ import Analytics from "./pages/Analytics";
 import MoreMenu from "./pages/MoreMenu";
 import SearchPage from "./pages/Search";
 import AuditLogs from "./pages/AuditLogs";
+import AddRelationship from "./pages/AddRelationship";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/search" element={<SearchPage />} />
               <Route path="/audit-logs" element={<AuditLogs />} />
               <Route path="/more" element={<MoreMenu />} />
+              <Route path="/relationships/new" element={<AddRelationship />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>
