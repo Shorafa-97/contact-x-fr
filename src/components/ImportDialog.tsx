@@ -212,7 +212,7 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
                       <thead>
                         <tr className="border-b border-border bg-muted/50">
                           <th className="px-3 py-2 text-left font-medium text-muted-foreground w-10">#</th>
-                          {fields.slice(0, 8).map((f) => (
+                          {fields.map((f) => (
                             <th key={f.key} className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap text-xs uppercase">
                               {f.label}
                             </th>
@@ -226,7 +226,7 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
                             className={`border-b border-border last:border-0 ${!row.valid ? "bg-destructive/5" : ""}`}
                           >
                             <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
-                            {fields.slice(0, 8).map((f) => {
+                            {fields.map((f) => {
                               const hasError = row.errors.some((e) => e.startsWith(f.label));
                               return (
                                 <td key={f.key} className={`px-3 py-2 whitespace-nowrap ${hasError ? "text-destructive" : "text-foreground"}`}>
@@ -259,7 +259,7 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
                           )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                          {fields.slice(0, 6).map((f) => {
+                          {fields.map((f) => {
                             const hasError = row.errors.some((e) => e.startsWith(f.label));
                             return (
                               <div key={f.key}>
