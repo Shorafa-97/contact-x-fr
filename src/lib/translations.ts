@@ -292,6 +292,18 @@ const translations: Record<string, Record<Lang, string>> = {
   "import.import": { en: "Import", ar: "استيراد" },
   "import.importContacts": { en: "Import", ar: "استيراد" },
   "import.importEntities": { en: "Import", ar: "استيراد" },
+
+  // Relationship
+  "relation.title": { en: "Add Relationship", ar: "إضافة علاقة" },
+  "relation.subtitle": { en: "Link a contact or entity to this record", ar: "ربط جهة اتصال أو كيان بهذا السجل" },
+  "relation.back": { en: "Back", ar: "رجوع" },
+  "relation.targetType": { en: "Relate to", ar: "الربط بـ" },
+  "relation.selectTarget": { en: "Select record", ar: "اختر السجل" },
+  "relation.searchPlaceholder": { en: "Search by name...", ar: "البحث بالاسم..." },
+  "relation.role": { en: "Role / Relationship Type", ar: "الدور / نوع العلاقة" },
+  "relation.save": { en: "Add Relationship", ar: "إضافة علاقة" },
+  "relation.saved": { en: "Relationship added", ar: "تمت إضافة العلاقة" },
+  "relation.savedDesc": { en: "The relationship has been saved successfully", ar: "تم حفظ العلاقة بنجاح" },
 };
 
 export function t(key: string, lang: Lang): string {

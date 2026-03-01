@@ -122,10 +122,10 @@ export default function EntityDetail() {
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-base font-semibold text-foreground">{t("entities.relatedContacts")}</h3>
           <div className="flex items-center gap-2">
-            <button className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+            <Link to={`/relationships/new?sourceType=entity&sourceId=${id}`} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted">
               <Plus className="h-3.5 w-3.5" />
               {t("common.addRelation")}
-            </button>
+            </Link>
             <span className="text-sm text-muted-foreground">{relatedContacts.length} {t("common.contacts")}</span>
           </div>
         </div>
