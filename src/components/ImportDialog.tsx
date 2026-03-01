@@ -234,13 +234,13 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
     </div>
   );
 
-  // Mobile card view
-  const mobileCardView = (
-    <div className="space-y-2.5">
+  // Card view for all screen sizes
+  const cardView = (
+    <div className="space-y-3">
       {parsedRows.map((row, i) => (
         <div
           key={i}
-          className={`rounded-lg border p-3 space-y-2 ${!row.valid ? "border-destructive/50 bg-destructive/5" : "border-border bg-muted/30"}`}
+          className={`rounded-lg border p-3 sm:p-4 space-y-2 ${!row.valid ? "border-destructive/50 bg-destructive/5" : "border-border bg-muted/30"}`}
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">#{i + 1}</span>
@@ -250,13 +250,13 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
               <AlertCircle className="h-4 w-4 text-destructive" />
             )}
           </div>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-2">
             {fields.map((f) => {
               const hasError = row.errors.some((e) => e.startsWith(f.label));
               return (
                 <div key={f.key} className="min-w-0">
-                  <p className="text-[10px] uppercase text-muted-foreground leading-tight">{f.label}</p>
-                  <p className={`text-xs truncate ${hasError ? "text-destructive font-medium" : "text-foreground"}`}>
+                  <p className="text-[10px] sm:text-[11px] uppercase text-muted-foreground leading-tight">{f.label}</p>
+                  <p className={`text-xs sm:text-sm truncate ${hasError ? "text-destructive font-medium" : "text-foreground"}`}>
                     {row.data[f.key] || "—"}
                   </p>
                 </div>
@@ -264,49 +264,10 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
             })}
           </div>
           {!row.valid && (
-            <p className="text-[10px] text-destructive leading-snug">{row.errors.join(", ")}</p>
+            <p className="text-[10px] sm:text-xs text-destructive leading-snug">{row.errors.join(", ")}</p>
           )}
         </div>
       ))}
-    </div>
-  );
-
-  // Desktop table view
-  const desktopTableView = (
-    <div className="rounded-lg border border-border overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border bg-muted/50">
-            <th className="px-3 py-2 text-left font-medium text-muted-foreground w-10">#</th>
-            {fields.map((f) => (
-              <th key={f.key} className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap text-xs uppercase">
-                {f.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {parsedRows.map((row, i) => (
-            <tr
-              key={i}
-              className={`border-b border-border last:border-0 ${!row.valid ? "bg-destructive/5" : ""}`}
-            >
-              <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
-              {fields.map((f) => {
-                const hasError = row.errors.some((e) => e.startsWith(f.label));
-                return (
-                  <td key={f.key} className={`px-3 py-2 whitespace-nowrap ${hasError ? "text-destructive" : "text-foreground"}`}>
-                    <div className="flex items-center gap-1">
-                      {row.data[f.key] || "—"}
-                      {hasError && <AlertCircle className="h-3 w-3 text-destructive flex-shrink-0" />}
-                    </div>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 
@@ -319,7 +280,7 @@ export default function ImportDialog({ open, onOpenChange, domain, fields, onImp
       ) : (
         <>
           {previewStats}
-          {isMobile ? mobileCardView : desktopTableView}
+          {cardView}
           {errorSummary}
         </>
       )}
