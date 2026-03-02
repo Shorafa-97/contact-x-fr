@@ -1,45 +1,68 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Users, Building2, CheckCircle, GitCompare, FileWarning, AlertTriangle, Target, ChevronRight, TrendingUp, Clock } from "lucide-react";
+import { Users, Building2, CheckCircle, GitCompare, FileWarning, AlertTriangle, Target, ChevronRight, TrendingUp, Clock, Activity, Shield, UserX, Star } from "lucide-react";
 import KPICard from "@/components/dashboard/KPICard";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Progress } from "@/components/ui/progress";
 
 // Main Dashboard data
 const contactsByType = [
-  { name: "Individual", value: 2450 },
-  { name: "Organization", value: 890 },
-  { name: "Government", value: 340 },
-  { name: "Non-Profit", value: 180 },
+  { name: "Citizen", value: 1850 },
+  { name: "Employee", value: 1120 },
+  { name: "External", value: 610 },
+  { name: "VIP", value: 280 },
 ];
 
 const entitiesByType = [
-  { name: "Ministry", value: 45 },
-  { name: "Agency", value: 78 },
-  { name: "Department", value: 124 },
-  { name: "Division", value: 89 },
-  { name: "Unit", value: 56 },
+  { name: "Public", value: 145 },
+  { name: "Semi-Government", value: 78 },
+  { name: "Private", value: 94 },
+  { name: "International", value: 42 },
+  { name: "NGO", value: 33 },
 ];
 
 const COLORS = ["hsl(217, 91%, 60%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)", "hsl(199, 89%, 48%)"];
 
 const recentActivity = [
-  { id: 1, action: "Contact Created", actionAr: "تم إنشاء جهة اتصال", name: "Mohammed Al-Rashid", nameAr: "محمد الرشيد", type: "Individual", time: "2 min ago", timeAr: "قبل دقيقتين" },
-  { id: 2, action: "Entity Updated", actionAr: "تم تحديث جهة", name: "Ministry of Finance", nameAr: "وزارة المالية", type: "Ministry", time: "15 min ago", timeAr: "قبل 15 دقيقة" },
-  { id: 3, action: "Duplicate Found", actionAr: "تم العثور على تكرار", name: "Sara Ahmed", nameAr: "سارة أحمد", type: "Individual", time: "1 hour ago", timeAr: "قبل ساعة" },
-  { id: 4, action: "Contact Merged", actionAr: "تم دمج جهة اتصال", name: "National Bank", nameAr: "البنك الوطني", type: "Organization", time: "2 hours ago", timeAr: "قبل ساعتين" },
-  { id: 5, action: "Contact Created", actionAr: "تم إنشاء جهة اتصال", name: "Ahmad Hassan", nameAr: "أحمد حسن", type: "Individual", time: "3 hours ago", timeAr: "قبل 3 ساعات" },
+  { id: 1, action: "Contact Created", actionAr: "تم إنشاء جهة اتصال", name: "Mohammed Al-Rashid", nameAr: "محمد الرشيد", type: "Citizen", time: "2 min ago", timeAr: "قبل دقيقتين" },
+  { id: 2, action: "Entity Updated", actionAr: "تم تحديث جهة", name: "Ministry of Finance", nameAr: "وزارة المالية", type: "Public", time: "15 min ago", timeAr: "قبل 15 دقيقة" },
+  { id: 3, action: "Duplicate Found", actionAr: "تم العثور على تكرار", name: "Sara Ahmed", nameAr: "سارة أحمد", type: "Employee", time: "1 hour ago", timeAr: "قبل ساعة" },
+  { id: 4, action: "Contact Merged", actionAr: "تم دمج جهة اتصال", name: "National Bank", nameAr: "البنك الوطني", type: "External", time: "2 hours ago", timeAr: "قبل ساعتين" },
+  { id: 5, action: "Contact Created", actionAr: "تم إنشاء جهة اتصال", name: "Ahmad Hassan", nameAr: "أحمد حسن", type: "VIP", time: "3 hours ago", timeAr: "قبل 3 ساعات" },
 ];
 
 // Executive data
-const monthlyGrowth = [
-  { month: "Sep", contacts: 3200, entities: 350 },
-  { month: "Oct", contacts: 3400, entities: 360 },
-  { month: "Nov", contacts: 3550, entities: 370 },
-  { month: "Dec", contacts: 3650, entities: 378 },
-  { month: "Jan", contacts: 3780, entities: 385 },
-  { month: "Feb", contacts: 3860, entities: 392 },
+const execContactsByType = [
+  { name: "Citizen", value: 1850 },
+  { name: "Employee", value: 1120 },
+  { name: "External", value: 610 },
+  { name: "VIP", value: 280 },
+];
+
+const execEntitiesByType = [
+  { name: "Public", value: 145 },
+  { name: "Semi-Govt", value: 78 },
+  { name: "Private", value: 94 },
+  { name: "International", value: 42 },
+  { name: "NGO", value: 33 },
+];
+
+const completenessDistribution = [
+  { range: "0-20%", count: 45 },
+  { range: "21-40%", count: 120 },
+  { range: "41-60%", count: 340 },
+  { range: "61-80%", count: 890 },
+  { range: "81-100%", count: 1465 },
+];
+
+const topEngagedEntities = [
+  { name: "Ministry of Finance", contacts: 245 },
+  { name: "Ministry of Health", contacts: 198 },
+  { name: "SAMA", contacts: 156 },
+  { name: "Ministry of Education", contacts: 134 },
+  { name: "Ministry of Interior", contacts: 112 },
 ];
 
 // Governance data
@@ -50,8 +73,22 @@ const weakProfiles = [
 ];
 
 const orphanRecords = [
-  { id: "c-5", name: "Khalid Mahmoud", nameAr: "خالد محمود", type: "Individual", reason: "No entity linked", reasonAr: "غير مرتبط بجهة" },
-  { id: "c-6", name: "Old Ministry Record", nameAr: "سجل وزارة قديم", type: "Organization", reason: "Parent entity deleted", reasonAr: "تم حذف الجهة الأم" },
+  { id: "c-5", name: "Khalid Mahmoud", nameAr: "خالد محمود", type: "Citizen", reason: "No entity linked", reasonAr: "غير مرتبط بجهة" },
+  { id: "c-6", name: "Old Ministry Record", nameAr: "سجل وزارة قديم", type: "Public", reason: "Parent entity deleted", reasonAr: "تم حذف الجهة الأم" },
+];
+
+const vipIncomplete = [
+  { id: "v-1", name: "HRH Prince Abdullah", nameAr: "صاحب السمو الملكي الأمير عبدالله", completeness: 72, missing: ["Phone (Secondary)", "Address", "Photo"] },
+  { id: "v-2", name: "Ambassador Sarah Khan", nameAr: "السفيرة سارة خان", completeness: 85, missing: ["Arabic Name", "Secondary Email"] },
+  { id: "v-3", name: "Minister Dr. Fahad", nameAr: "معالي الوزير د. فهد", completeness: 65, missing: ["Phone", "Address", "Position End Date"] },
+];
+
+const mandatoryViolations = [
+  { field: "Nationality", fieldAr: "الجنسية", contactCount: 34, entityCount: 0 },
+  { field: "Entity", fieldAr: "الجهة", contactCount: 23, entityCount: 0 },
+  { field: "Position", fieldAr: "المنصب", contactCount: 18, entityCount: 0 },
+  { field: "Country", fieldAr: "الدولة", contactCount: 0, entityCount: 12 },
+  { field: "Sector", fieldAr: "القطاع", contactCount: 0, entityCount: 8 },
 ];
 
 export default function Dashboard() {
@@ -74,13 +111,26 @@ export default function Dashboard() {
           <TabsTrigger value="analytics">{t("dashboard.tabAnalytics")}</TabsTrigger>
         </TabsList>
 
-        {/* Main Dashboard */}
+        {/* ======================== MAIN / OVERVIEW ======================== */}
         <TabsContent value="main" className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <KPICard title={t("dashboard.totalContacts")} value="3,860" change={`+12.5% ${t("common.fromLastMonth")}`} changeType="positive" icon={Users} />
             <KPICard title={t("dashboard.totalEntities")} value="392" change={`+3.2% ${t("common.fromLastMonth")}`} changeType="positive" icon={Building2} />
             <KPICard title={t("dashboard.avgCompleteness")} value="78.4%" change={`-2.1% ${t("common.fromLastMonth")}`} changeType="negative" icon={CheckCircle} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <KPICard title={t("dashboard.activeContacts")} value="3,140" change={`81.3% ${t("dashboard.ofTotal")}`} changeType="positive" icon={Activity} />
+            <KPICard title={t("dashboard.activeEntities")} value="348" change={`88.8% ${t("dashboard.ofTotal")}`} changeType="positive" icon={Activity} />
             <KPICard title={t("dashboard.pendingDuplicates")} value="47" change={`12 ${t("common.resolvedThisWeek")}`} changeType="neutral" icon={GitCompare} />
+          </div>
+
+          <div className="card-enterprise">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-base font-semibold text-foreground">{t("dashboard.recentActivityCount")}</h3>
+              <span className="text-2xl font-bold text-foreground">238</span>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">{t("dashboard.last30Days")}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -143,38 +193,196 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        {/* Executive Dashboard */}
+        {/* ======================== EXECUTIVE ======================== */}
         <TabsContent value="executive" className="space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            <KPICard title={t("executive.totalRecords")} value="4,252" change="+8.3% QoQ" changeType="positive" icon={Users} />
-            <KPICard title={t("executive.dataQuality")} value="78.4%" change="+6.2% QoQ" changeType="positive" icon={CheckCircle} />
-            <KPICard title={t("executive.resolutionRate")} value="94.7%" change="47 pending" changeType="neutral" icon={Target} />
+            <KPICard title={t("dashboard.totalContacts")} value="3,860" change={`+12.5% ${t("common.fromLastMonth")}`} changeType="positive" icon={Users} />
+            <KPICard title={t("dashboard.totalEntities")} value="392" change={`+3.2% ${t("common.fromLastMonth")}`} changeType="positive" icon={Building2} />
+            <KPICard title={t("executive.contactCompleteness")} value="78.4%" change={`+2.1% ${t("common.fromLastMonth")}`} changeType="positive" icon={CheckCircle} />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <KPICard title={t("executive.entityCompleteness")} value="82.1%" change={`+1.5% ${t("common.fromLastMonth")}`} changeType="positive" icon={CheckCircle} />
+            <KPICard title={t("executive.duplicateRiskIndex")} value="3.8%" change="47 unresolved" changeType="negative" icon={AlertTriangle} />
+            <KPICard title={t("executive.totalRecords")} value="4,252" change="+8.3% QoQ" changeType="positive" icon={Target} />
           </div>
 
+          {/* Top Engaged Entities */}
           <div className="card-enterprise">
-            <h3 className="mb-4 text-base font-semibold text-foreground">{t("executive.growthTrend")}</h3>
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={monthlyGrowth}>
+            <h3 className="mb-4 text-base font-semibold text-foreground">{t("executive.topEngaged")}</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={topEngagedEntities} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+                <XAxis type="number" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
+                <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={140} stroke="hsl(215, 16%, 47%)" />
+                <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+                <Bar dataKey="contacts" fill="hsl(217, 91%, 60%)" radius={[0, 6, 6, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Contacts & Entities by Type */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="card-enterprise">
+              <h3 className="mb-4 text-base font-semibold text-foreground">{t("executive.contactByType")}</h3>
+              <ResponsiveContainer width="100%" height={280}>
+                <PieChart>
+                  <Pie data={execContactsByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
+                    {execContactsByType.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="card-enterprise">
+              <h3 className="mb-4 text-base font-semibold text-foreground">{t("executive.entityByType")}</h3>
+              <ResponsiveContainer width="100%" height={280}>
+                <PieChart>
+                  <Pie data={execEntitiesByType} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value">
+                    {execEntitiesByType.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Completeness Distribution */}
+          <div className="card-enterprise">
+            <h3 className="mb-4 text-base font-semibold text-foreground">{t("executive.completenessDistribution")}</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={completenessDistribution}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
+                <XAxis dataKey="range" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
                 <YAxis tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
                 <Tooltip contentStyle={{ borderRadius: "0.75rem" }} />
-                <Bar dataKey="contacts" name={t("page.contacts")} fill="hsl(217, 91%, 60%)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="entities" name={t("page.entities")} fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="hsl(142, 71%, 45%)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </TabsContent>
 
-        {/* Governance Dashboard */}
+        {/* ======================== GOVERNANCE ======================== */}
         <TabsContent value="governance" className="space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <KPICard title={t("governance.weakProfiles")} value="156" change="< 30%" changeType="negative" icon={FileWarning} />
             <KPICard title={t("governance.orphanRecords")} value="23" changeType="negative" icon={Users} change={isAr ? "غير مرتبط بجهة" : "No entity linked"} />
-            <KPICard title={t("governance.pendingDuplicates")} value="47" changeType="neutral" icon={GitCompare} change={isAr ? "يتطلب مراجعة" : "Requires review"} />
-            <KPICard title={t("governance.qualityAlerts")} value="12" changeType="negative" icon={AlertTriangle} change={isAr ? "مشاكل حرجة" : "Critical issues"} />
+            <KPICard title={t("governance.vipIncomplete")} value="8" changeType="negative" icon={Star} change={isAr ? "VIP أقل من 100%" : "VIP < 100% complete"} />
+            <KPICard title={t("governance.mandatoryViolations")} value="95" changeType="negative" icon={Shield} change={isAr ? "حقول إلزامية مفقودة" : "Missing mandatory fields"} />
           </div>
 
+          {/* Duplicate Metrics */}
+          <div className="card-enterprise">
+            <h3 className="mb-4 text-base font-semibold text-foreground">{t("governance.duplicateMetrics")}</h3>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="rounded-xl border border-border p-4 text-center">
+                <p className="text-2xl font-bold text-foreground">47</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("governance.dupTotal")}</p>
+              </div>
+              <div className="rounded-xl border border-border p-4 text-center">
+                <p className="text-2xl font-bold text-foreground">32</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("governance.dupPending")}</p>
+              </div>
+              <div className="rounded-xl border border-border p-4 text-center">
+                <p className="text-2xl font-bold text-foreground">15</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("governance.dupResolved")}</p>
+              </div>
+              <div className="rounded-xl border border-border p-4 text-center">
+                <p className="text-2xl font-bold text-foreground">31.9%</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("governance.dupResolutionRate")}</p>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground">{t("governance.dupHighConf")}</p>
+                <p className="text-lg font-bold text-destructive mt-1">12</p>
+                <p className="text-xs text-muted-foreground">≥ 85%</p>
+              </div>
+              <div className="rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground">{t("governance.dupMedConf")}</p>
+                <p className="text-lg font-bold text-warning mt-1">23</p>
+                <p className="text-xs text-muted-foreground">50–84%</p>
+              </div>
+              <div className="rounded-lg border border-border p-3">
+                <p className="text-xs text-muted-foreground">{t("governance.dupLowConf")}</p>
+                <p className="text-lg font-bold text-muted-foreground mt-1">12</p>
+                <p className="text-xs text-muted-foreground">&lt; 50%</p>
+              </div>
+            </div>
+          </div>
+
+          {/* VIP Profiles Incomplete */}
+          <div className="card-enterprise">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-foreground">{t("governance.vipIncomplete")}</h3>
+              <button className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">{t("governance.viewAll")}</button>
+            </div>
+            <div className="space-y-2">
+              {vipIncomplete.map((v) => (
+                <div key={v.id} className="flex items-center justify-between rounded-lg border border-border p-3 transition-colors hover:bg-muted/30">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Star className="h-3.5 w-3.5 text-warning" />
+                      <p className="text-sm font-medium text-foreground">{isAr ? v.nameAr : v.name}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">{t("governance.missing")}: {v.missing.join(", ")}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-16 overflow-hidden rounded-full bg-muted">
+                        <div className="h-full rounded-full bg-warning" style={{ width: `${v.completeness}%` }} />
+                      </div>
+                      <span className="text-xs font-medium text-warning">{v.completeness}%</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mandatory Field Violations */}
+          <div className="card-enterprise">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-foreground">{t("governance.mandatoryViolations")}</h3>
+              <button className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">{t("governance.viewAll")}</button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="table-enterprise">
+                <thead>
+                  <tr>
+                    <th>{t("governance.violationField")}</th>
+                    <th>{t("page.contacts")}</th>
+                    <th>{t("page.entities")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mandatoryViolations.map((v) => (
+                    <tr key={v.field}>
+                      <td className="font-medium text-foreground">{isAr ? v.fieldAr : v.field}</td>
+                      <td>
+                        {v.contactCount > 0 ? (
+                          <span className="badge-status bg-destructive/10 text-destructive">{v.contactCount}</span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td>
+                        {v.entityCount > 0 ? (
+                          <span className="badge-status bg-destructive/10 text-destructive">{v.entityCount}</span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Weak Profiles */}
           <div className="card-enterprise">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-base font-semibold text-foreground">{t("governance.weakProfiles")}</h3>
@@ -201,6 +409,7 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Orphan Records */}
           <div className="card-enterprise">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-base font-semibold text-foreground">{t("governance.orphanRecords")}</h3>
@@ -223,12 +432,12 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        {/* Operational Tab */}
+        {/* ======================== OPERATIONAL ======================== */}
         <TabsContent value="operational" className="space-y-6">
           <OperationalTab />
         </TabsContent>
 
-        {/* Analytics Tab */}
+        {/* ======================== ANALYTICS ======================== */}
         <TabsContent value="analytics" className="space-y-6">
           <AnalyticsTab />
         </TabsContent>
@@ -237,10 +446,10 @@ export default function Dashboard() {
   );
 }
 
-// Analytics tab content (moved from separate page)
+// Analytics tab content
 function AnalyticsTab() {
   const { t } = useTranslation();
-  const completenessDistribution = [
+  const analyticsCompleteness = [
     { range: "0-20%", count: 45 },
     { range: "21-40%", count: 120 },
     { range: "41-60%", count: 340 },
@@ -248,25 +457,26 @@ function AnalyticsTab() {
     { range: "81-100%", count: 1465 },
   ];
   const analyticsContactsByType = [
-    { name: "Individual", value: 2450 },
-    { name: "Organization", value: 890 },
-    { name: "Government", value: 340 },
-    { name: "Non-Profit", value: 180 },
+    { name: "Citizen", value: 1850 },
+    { name: "Employee", value: 1120 },
+    { name: "External", value: 610 },
+    { name: "VIP", value: 280 },
   ];
   const analyticsEntitiesByType = [
-    { name: "Ministry", value: 45 },
-    { name: "Agency", value: 78 },
-    { name: "Department", value: 124 },
-    { name: "Division", value: 89 },
+    { name: "Public", value: 145 },
+    { name: "Semi-Govt", value: 78 },
+    { name: "Private", value: 94 },
+    { name: "International", value: 42 },
+    { name: "NGO", value: 33 },
   ];
-  const ANALYTICS_COLORS = ["hsl(217, 91%, 60%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)"];
+  const ANALYTICS_COLORS = ["hsl(217, 91%, 60%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)", "hsl(199, 89%, 48%)"];
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <div className="card-enterprise">
         <h3 className="mb-4 text-base font-semibold text-foreground">{t("analytics.completenessDistribution")}</h3>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={completenessDistribution}>
+          <BarChart data={analyticsCompleteness}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
             <XAxis dataKey="range" tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
             <YAxis tick={{ fontSize: 12 }} stroke="hsl(215, 16%, 47%)" />
