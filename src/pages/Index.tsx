@@ -120,17 +120,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            <KPICard title={t("dashboard.activeContacts")} value="3,140" change={`81.3% ${t("dashboard.ofTotal")}`} changeType="positive" icon={Activity} />
-            <KPICard title={t("dashboard.activeEntities")} value="348" change={`88.8% ${t("dashboard.ofTotal")}`} changeType="positive" icon={Activity} />
             <KPICard title={t("dashboard.pendingDuplicates")} value="47" change={`12 ${t("common.resolvedThisWeek")}`} changeType="neutral" icon={GitCompare} />
-          </div>
-
-          <div className="card-enterprise">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="text-base font-semibold text-foreground">{t("dashboard.recentActivityCount")}</h3>
-              <span className="text-2xl font-bold text-foreground">238</span>
-            </div>
-            <p className="text-xs text-muted-foreground mb-4">{t("dashboard.last30Days")}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -161,36 +151,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="card-enterprise">
-            <h3 className="mb-4 text-base font-semibold text-foreground">{t("dashboard.recentActivity")}</h3>
-            <div className="overflow-x-auto">
-              <table className="table-enterprise">
-                <thead>
-                  <tr>
-                    <th>{t("dashboard.action")}</th>
-                    <th>{t("dashboard.name")}</th>
-                    <th>{t("dashboard.type")}</th>
-                    <th>{t("dashboard.time")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentActivity.map((item) => (
-                    <tr key={item.id}>
-                      <td className="font-medium text-foreground">{isAr ? item.actionAr : item.action}</td>
-                      <td>
-                        <div>
-                          <p className="font-medium text-foreground">{isAr ? item.nameAr : item.name}</p>
-                          <p className="text-xs text-muted-foreground">{isAr ? item.name : item.nameAr}</p>
-                        </div>
-                      </td>
-                      <td><span className="badge-status badge-type">{item.type}</span></td>
-                      <td className="text-muted-foreground">{isAr ? item.timeAr : item.time}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
         </TabsContent>
 
         {/* ======================== EXECUTIVE ======================== */}
