@@ -16,6 +16,15 @@ const translations: Record<string, Record<Lang, string>> = {
   "header.toggleTheme": { en: "Toggle theme", ar: "تبديل السمة" },
   "header.toggleDir": { en: "Toggle language direction", ar: "تبديل اتجاه اللغة" },
   "header.collapse": { en: "Collapse", ar: "طي" },
+  "header.signOut": { en: "Sign out", ar: "تسجيل الخروج" },
+
+  // Login
+  "login.title": { en: "Sign in to your account", ar: "تسجيل الدخول إلى حسابك" },
+  "login.email": { en: "Email / Username", ar: "البريد الإلكتروني / اسم المستخدم" },
+  "login.emailPlaceholder": { en: "Enter your email or username", ar: "أدخل بريدك الإلكتروني أو اسم المستخدم" },
+  "login.password": { en: "Password", ar: "كلمة المرور" },
+  "login.submit": { en: "Sign In", ar: "تسجيل الدخول" },
+  "login.error": { en: "Please fill in all fields", ar: "يرجى ملء جميع الحقول" },
 
   // Page titles
   "page.dashboard": { en: "Dashboard", ar: "لوحة التحكم" },

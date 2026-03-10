@@ -1,7 +1,8 @@
 import { useLayout } from "@/contexts/LayoutContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Sun, Moon, Globe, ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Sun, Moon, Globe, ChevronRight, PanelLeftClose, PanelLeftOpen, LogOut } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const pageTitleKeys: Record<string, string> = {
   "/": "page.dashboard",
@@ -15,12 +16,21 @@ const pageTitleKeys: Record<string, string> = {
 
 export default function AppHeader() {
   const { toggleSidebar, toggleDir, toggleTheme, toggleCollapse, sidebarCollapsed, theme, dir } = useLayout();
+  const { logout, user } = useAuth();
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const titleKey = pageTitleKeys[location.pathname] || "";
   const pageTitle = titleKey ? t(titleKey) : pathSegments[pathSegments.length - 1] || t("page.dashboard");
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
+
+  const initials = user?.email ? user.email.substring(0, 2).toUpperCase() : "??";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card px-4 lg:px-6"
@@ -28,7 +38,6 @@ export default function AppHeader() {
     >
       {/* Left */}
       <div className="flex items-center gap-3">
-        {/* Collapse toggle - desktop only */}
         <button
           onClick={toggleCollapse}
           className="hidden rounded-lg p-2 text-muted-foreground hover:bg-muted lg:inline-flex"
@@ -61,8 +70,15 @@ export default function AppHeader() {
           <span>{dir === "ltr" ? "EN" : "AR"}</span>
         </button>
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-          AD
+          {initials}
         </div>
+        <button
+          onClick={handleLogout}
+          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          title={t("header.signOut")}
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
       </div>
     </header>
   );
